@@ -17,10 +17,22 @@
   body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;padding-bottom:env(safe-area-inset-bottom,20px);-webkit-font-smoothing:antialiased}
   .header{position:sticky;top:0;z-index:100;background:rgba(15,23,42,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 16px 12px}
   .header h1{font-size:1.4rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:12px;text-align:center}
-  .tabs{display:flex;gap:6px;background:var(--surface);border-radius:10px;padding:3px;margin-bottom:10px}
-  .tab{flex:1;padding:10px 8px;border:none;border-radius:8px;font-family:inherit;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s ease;background:transparent;color:var(--text-dim);letter-spacing:-0.01em}
-  .tab.active[data-site="joe"]{background:var(--accent-joe-dim);color:var(--accent-joe);box-shadow:0 0 12px rgba(56,189,248,0.15)}
-  .tab.active[data-site="mike"]{background:var(--accent-mike-dim);color:var(--accent-mike);box-shadow:0 0 12px rgba(167,139,250,0.15)}
+  #selector-screen{min-height:calc(100dvh - 70px);display:flex;flex-direction:column;justify-content:center;padding:24px 16px}
+  .dept-group{margin-bottom:32px}
+  .dept-group-label{font-size:1.1rem;font-weight:700;color:var(--text-dim);letter-spacing:-0.01em;margin-bottom:12px;padding:0 4px}
+  .dept-card{width:100%;display:flex;flex-direction:column;align-items:flex-start;padding:18px 20px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);cursor:pointer;margin-bottom:10px;transition:background 0.15s;font-family:inherit;text-align:left}
+  .dept-card:active{background:var(--surface-hover)}
+  .dept-card-joe{border-color:rgba(56,189,248,0.3)}
+  .dept-card-joe:active,.dept-card-joe:focus{background:var(--accent-joe-dim)}
+  .dept-card-mike{border-color:rgba(167,139,250,0.3)}
+  .dept-card-mike:active,.dept-card-mike:focus{background:var(--accent-mike-dim)}
+  .dept-card-site{font-size:1.1rem;font-weight:700;letter-spacing:-0.02em}
+  .dept-card-joe .dept-card-site{color:var(--accent-joe)}
+  .dept-card-mike .dept-card-site{color:var(--accent-mike)}
+  .dept-card-sub{font-size:0.8rem;color:var(--text-dim);margin-top:3px}
+  #breadcrumb{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:0 2px}
+  #breadcrumb-text{font-size:0.9rem;font-weight:600;color:var(--text)}
+  #breadcrumb button{background:none;border:none;font-family:inherit;font-size:0.85rem;color:var(--text-dim);cursor:pointer;padding:4px 0;-webkit-tap-highlight-color:transparent}
   .search-wrap{position:relative}
   .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);pointer-events:none}
   .search-input{width:100%;padding:10px 12px 10px 38px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:0.93rem;outline:none;transition:border-color 0.2s}
@@ -57,25 +69,35 @@
   .no-results.visible{display:block}
   .regan-note{font-size:0.72rem;color:var(--text-dim);padding:4px 14px 6px;font-style:italic}
   .hidden{display:none!important}
-  @media(min-width:600px){.content{max-width:540px;margin:0 auto}.header>*{max-width:540px;margin-left:auto;margin-right:auto}}
+  @media(min-width:600px){.content{max-width:540px;margin:0 auto}#selector-screen{max-width:540px;margin:0 auto}.header>*{max-width:540px;margin-left:auto;margin-right:auto}}
 </style>
 </head>
 <body>
 <div class="header">
   <h1>📞 Hospital Directory</h1>
-  <div class="tabs">
-    <button class="tab active" data-site="joe" onclick="switchSite('joe')">St. Joe's</button>
-    <button class="tab" data-site="mike" onclick="switchSite('mike')">St. Mike's</button>
-  </div>
-  <div class="search-wrap">
+  <div id="breadcrumb" style="display:none"><span id="breadcrumb-text"></span><button onclick="showSelector()">← Change</button></div>
+  <div class="search-wrap" id="search-wrap" style="display:none">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input type="text" class="search-input" placeholder="Search contacts..." oninput="filterContacts()" id="searchInput">
   </div>
 </div>
-<div class="content">
+<div id="selector-screen">
+  <div class="dept-group">
+    <div class="dept-group-label">🩺 Anesthesia</div>
+    <button class="dept-card dept-card-joe" onclick="selectView('anesthesia','joe')">
+      <span class="dept-card-site">St. Joe's</span>
+      <span class="dept-card-sub">St. Joseph's Medical Center</span>
+    </button>
+    <button class="dept-card dept-card-mike" onclick="selectView('anesthesia','mike')">
+      <span class="dept-card-site">St. Mike's</span>
+      <span class="dept-card-sub">St. Michael's Medical Center</span>
+    </button>
+  </div>
+</div>
+<div class="content" id="directory-content" style="display:none">
 
 <!-- ST. JOE'S -->
-<div class="site-panel site-joe active" id="panel-joe">
+<div class="site-panel site-joe" id="panel-joe">
 <div class="base-badge">Base: (973) 754 + ext</div>
 
 <div class="accordion open" data-accordion><div class="accordion-header" onclick="toggleAccordion(this)"><span class="accordion-title">🚨 Critical / Frequently Used</span><svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="accordion-body"><div class="accordion-body-inner">
@@ -214,9 +236,10 @@
 
 </div>
 <script>
-let currentSite='joe';
+let currentSite=null;
 document.addEventListener('click',function(e){const link=e.target.closest('a[href^="tel:"]');if(link){e.preventDefault();e.stopPropagation();window.open(link.href,'_self')}},true);
-function switchSite(site){currentSite=site;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelector(`.tab[data-site="${site}"]`).classList.add('active');document.querySelectorAll('.site-panel').forEach(p=>p.classList.remove('active'));document.getElementById(`panel-${site}`).classList.add('active');document.body.className=currentSite==='mike'?'site-mike':'';filterContacts()}
+function selectView(dept,site){currentSite=site;document.body.className=site==='mike'?'site-mike':'';document.querySelectorAll('.site-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-'+site).classList.add('active');const labels={joe:"St. Joe's",mike:"St. Mike's"};const deptLabels={anesthesia:'🩺 Anesthesia'};document.getElementById('breadcrumb-text').textContent=deptLabels[dept]+' · '+labels[site];document.getElementById('selector-screen').style.display='none';document.getElementById('directory-content').style.display='block';document.getElementById('breadcrumb').style.display='flex';document.getElementById('search-wrap').style.display='block'}
+function showSelector(){document.getElementById('selector-screen').style.display='flex';document.getElementById('directory-content').style.display='none';document.getElementById('breadcrumb').style.display='none';document.getElementById('search-wrap').style.display='none';document.getElementById('searchInput').value='';document.body.className='';currentSite=null}
 function toggleAccordion(header){header.parentElement.classList.toggle('open')}
 function filterContacts(){const query=document.getElementById('searchInput').value.toLowerCase().trim();const panel=document.getElementById(`panel-${currentSite}`);const accordions=panel.querySelectorAll('.accordion[data-accordion]');let totalVisible=0;accordions.forEach(acc=>{const rows=acc.querySelectorAll('.phone-row');const subHeaders=acc.querySelectorAll('.sub-header');let accVisible=0;rows.forEach(row=>{const label=row.querySelector('.phone-label').textContent.toLowerCase();const numEl=row.querySelector('.phone-number');const number=numEl?numEl.textContent.toLowerCase():'';const match=!query||label.includes(query)||number.includes(query);row.classList.toggle('hidden',!match);if(match)accVisible++});subHeaders.forEach(sh=>{let next=sh.nextElementSibling;let anyVisible=false;while(next&&!next.classList.contains('sub-header')){if(next.classList.contains('phone-row')&&!next.classList.contains('hidden')){anyVisible=true;break}next=next.nextElementSibling}sh.classList.toggle('hidden',!anyVisible)});acc.classList.toggle('hidden',accVisible===0&&query.length>0);if(query&&accVisible>0)acc.classList.add('open');totalVisible+=accVisible});const noResults=document.getElementById(`no-results-${currentSite}`);noResults.classList.toggle('visible',totalVisible===0&&query.length>0)}
 </script>
