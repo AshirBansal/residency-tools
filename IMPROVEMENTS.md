@@ -16,5 +16,5 @@ Questions to resolve:
 ### #7 — IM Resident contact
 How to page or reach the Internal Medicine resident on call at St. Joe's is currently unknown. Need the pager number or direct line to add to the On-Call Services section.
 
-### #8 — St. Joe's Pharmacy extension
-Currently listed as "TBD" in the Services section. Need the correct extension to make it a tappable link.
+### ~~#8 — St. Joe's Pharmacy extension~~
+Resolved: extension 7525 added to Critical/Frequently Used and Services sections.
