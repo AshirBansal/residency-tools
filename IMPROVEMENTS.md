@@ -4,12 +4,7 @@
 
 ### Needs Design Decision
 
-#### #1 — Deeper department/site selector
-The current selector screen lets users choose Joe's vs Mike's. The original request was a two-level picker (department + location, e.g. "Anesthesia – Joe's"). Needs UX decision before implementing.
-
-Questions to resolve:
-- Should the dropdown filter the existing accordion view, or replace it?
-- What department groupings should appear?
+*(none pending)*
 
 ---
 
@@ -61,8 +56,8 @@ Removed from Departments; now lives in On-Call Services alongside Ortho, OMFS, a
 Always-visible tap-to-call button grid replacing tall phone-row list. Numbers hidden; label only. Urgent items (Board Runner, Blood Bank, Security) highlighted in red.
 Every critical number also exists in a regular accordion section so search finds it.
 
-### Site selector added
-Mandatory first-screen picker to choose between St. Joe's and St. Mike's before entering the directory.
+### ~~#1 — Site selector added~~
+Resolved: mandatory first-screen picker to choose between St. Joe's and St. Mike's before entering the directory.
 
 ### ~~#8 — St. Joe's Pharmacy extension~~
 Resolved: extension **3032** in Critical grid and Services section.
