@@ -13,26 +13,107 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700&family=JetBrains+Mono:wght@400;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#0f172a;--surface:#1e293b;--surface-hover:#273548;--border:#334155;--text:#f1f5f9;--text-dim:#94a3b8;--accent:#38bdf8;--phone-color:#4ade80;--danger:#f87171;--radius:12px}
-html{font-size:15px}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;padding-bottom:env(safe-area-inset-bottom,20px);-webkit-font-smoothing:antialiased}
-.header{position:sticky;top:0;z-index:100;background:rgba(15,23,42,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 16px 12px}
-.header h1{font-size:1.4rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:12px;text-align:center}
+:root{
+  --bg:#0f172a;--surface:#1e293b;--surface-hover:#273548;--border:#334155;
+  --text:#f1f5f9;--text-dim:#94a3b8;--phone-color:#4ade80;--danger:#f87171;--radius:12px;
+  --accent:#38bdf8;--accent-rgb:56,189,248
+}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
+  display:flex;flex-direction:column;height:100dvh;-webkit-font-smoothing:antialiased
+}
+/* ── Header ── */
+.header{
+  flex-shrink:0;z-index:100;
+  background:rgba(15,23,42,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);padding:14px 16px 11px
+}
+.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:10px;text-align:center}
 .search-wrap{position:relative}
 .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);pointer-events:none}
-.search-input{width:100%;padding:10px 12px 10px 38px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:0.93rem;outline:none;transition:border-color 0.2s}
+.search-input{width:100%;padding:9px 12px 9px 38px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:0.93rem;outline:none;transition:border-color 0.2s}
 .search-input::placeholder{color:var(--text-dim);opacity:0.6}
 .search-input:focus{border-color:var(--accent)}
-.content{padding:12px 12px 40px}
-.critical-section{margin-bottom:8px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
-.critical-header{padding:10px 14px;background:var(--surface);font-size:0.95rem;font-weight:700;letter-spacing:-0.01em;border-bottom:1px solid var(--border);color:var(--accent)}
-.critical-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px;background:var(--surface)}
-.crit-btn{display:flex;align-items:center;justify-content:center;text-align:center;padding:10px 6px;border-radius:8px;background:rgba(255,255,255,0.04);color:var(--text);font-family:inherit;font-size:0.8rem;font-weight:600;text-decoration:none;line-height:1.25;min-height:48px;border:1px solid var(--border);-webkit-user-select:none;user-select:none;transition:background 0.15s}
-.crit-btn:active{background:var(--surface-hover)}
-.crit-btn.urgent{color:var(--danger);border-color:rgba(248,113,113,0.25);background:rgba(248,113,113,0.07)}
+/* ── Quick strip ── */
+#quick-strip{flex-shrink:0;padding:8px 12px 0;background:var(--bg)}
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+/* ── Pages ── */
+#pages-outer{flex:1;overflow:hidden;position:relative;min-height:0}
+#pages-scroll{
+  display:flex;height:100%;
+  overflow-x:scroll;overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none
+}
+#pages-scroll::-webkit-scrollbar{display:none}
+.page{
+  min-width:100%;width:100%;flex-shrink:0;
+  overflow-y:auto;overflow-x:hidden;
+  scroll-snap-align:start;
+  padding:10px 12px 24px
+}
+/* ── Search overlay ── */
+#search-overlay{
+  position:absolute;inset:0;z-index:20;
+  overflow-y:auto;padding:10px 12px 20px;
+  background:var(--bg);
+  opacity:0;pointer-events:none;
+  transition:opacity 0.18s
+}
+#search-overlay.visible{opacity:1;pointer-events:auto}
+.search-group-label{
+  font-size:0.68rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.08em;padding:10px 2px 6px;
+  color:var(--group-color,var(--text-dim))
+}
+.search-group-label:first-child{padding-top:2px}
+.search-card{
+  border-radius:var(--radius);overflow:hidden;
+  border:1px solid rgba(var(--card-rgb,var(--accent-rgb)),0.22);
+  background:var(--surface);margin-bottom:8px
+}
+/* ── Tab bar ── */
+#tab-bar{
+  flex-shrink:0;display:flex;
+  background:rgba(10,16,28,0.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid rgba(255,255,255,0.07);
+  padding-bottom:env(safe-area-inset-bottom,0)
+}
+.tab-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:7px 4px 10px;gap:3px;
+  border:none;background:transparent;
+  font-family:inherit;font-size:0.6rem;font-weight:700;letter-spacing:0.03em;
+  color:var(--text-dim);cursor:pointer;position:relative;
+  transition:color 0.2s;-webkit-user-select:none;user-select:none
+}
+.tab-btn::before{
+  content:'';position:absolute;top:0;left:50%;translate:-50% 0;
+  width:0;height:3px;border-radius:0 0 3px 3px;
+  background:var(--tab-color);
+  transition:width 0.28s cubic-bezier(0.4,0,0.2,1)
+}
+.tab-btn.active{color:var(--tab-color)}
+.tab-btn.active::before{width:26px}
+.tab-emoji{font-size:1.25rem;line-height:1}
+/* ── Crit / quick buttons ── */
+.crit-btn{
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:10px 6px;border-radius:8px;background:rgba(255,255,255,0.05);
+  color:var(--text);font-family:inherit;font-size:0.8rem;font-weight:600;
+  text-decoration:none;line-height:1.25;min-height:48px;
+  border:1px solid var(--border);-webkit-user-select:none;user-select:none;
+  transition:background 0.15s,box-shadow 0.15s;
+  box-shadow:0 1px 3px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.04)
+}
+.crit-btn:active{background:var(--surface-hover);box-shadow:none}
+.crit-btn.urgent{color:var(--danger);border-color:rgba(248,113,113,0.3);background:rgba(248,113,113,0.08)}
 .crit-btn.urgent:active{background:rgba(248,113,113,0.15)}
+/* ── Accordion ── */
 .accordion{margin-bottom:8px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);transition:border-color 0.25s,box-shadow 0.25s}
-.accordion.open{border-color:rgba(56,189,248,0.25);box-shadow:0 6px 28px rgba(0,0,0,0.45)}
+.accordion.open{border-color:rgba(var(--accent-rgb),0.28);box-shadow:0 6px 28px rgba(0,0,0,0.5)}
 .accordion-header{display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--surface);cursor:pointer;-webkit-user-select:none;user-select:none;transition:background 0.15s}
 .accordion-header:active{background:var(--surface-hover)}
 .accordion-title{font-size:0.95rem;font-weight:700;letter-spacing:-0.01em;color:var(--accent)}
@@ -40,12 +121,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .accordion.open .accordion-chevron{transform:rotate(180deg)}
 .accordion-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows 0.35s cubic-bezier(0.4,0,0.2,1)}
 .accordion.open .accordion-body{grid-template-rows:1fr}
-.accordion-body-inner{min-height:0;overflow:hidden;border-top:1px solid rgba(56,189,248,0.15);background:linear-gradient(180deg,rgba(56,189,248,0.04) 0,rgba(8,14,26,0) 28px),#080e1a}
+.accordion-body-inner{
+  min-height:0;overflow:hidden;
+  border-top:1px solid rgba(var(--accent-rgb),0.15);
+  background:linear-gradient(180deg,rgba(var(--accent-rgb),0.04) 0,transparent 28px),#080e1a
+}
 .sub-header{padding:8px 14px 4px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.04)}
 .sub-header:first-child{border-top:none}
+/* ── Phone rows ── */
 .phone-row{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.15s;color:inherit;-webkit-user-select:none;user-select:none;cursor:pointer;flex-wrap:wrap}
 .phone-row:last-child{border-bottom:none}
-.phone-row:not(.placeholder):active{background:var(--surface-hover)}
+.phone-row:not(.placeholder):active{background:rgba(255,255,255,0.04)}
 .phone-label{font-size:0.9rem;font-weight:500;color:var(--text);flex:1;padding-right:12px;line-height:1.3}
 .phone-number{font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:600;color:var(--phone-color);white-space:nowrap;display:flex;align-items:center;gap:6px;text-decoration:none;background:rgba(74,222,128,0.10);padding:5px 9px;border-radius:7px}
 .phone-number .call-icon{width:18px;height:18px;opacity:0.85;flex-shrink:0}
@@ -55,7 +141,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .phone-row.placeholder .phone-number{color:var(--text-dim);font-style:italic;font-weight:400;background:transparent;border:1px dashed var(--border)}
 .phone-detail{width:100%;display:grid;grid-template-rows:0fr;transition:grid-template-rows 0.25s cubic-bezier(0.4,0,0.2,1)}
 .phone-row.open .phone-detail{grid-template-rows:1fr}
-.phone-detail-inner{min-height:0;overflow:hidden;border-top:1px solid rgba(255,255,255,0.07);background:rgba(6,10,20,0.9)}
+.phone-detail-inner{min-height:0;overflow:hidden;border-top:1px solid rgba(255,255,255,0.07);background:rgba(6,10,20,0.92)}
 .detail-line{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,0.04)}
 .detail-line:last-child{border-bottom:none}
 .detail-label{font-size:0.82rem;color:var(--text-dim);flex:1;padding-right:10px}
@@ -65,7 +151,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .no-results.visible{display:block}
 .regan-note{font-size:0.72rem;color:var(--text-dim);padding:4px 14px 6px;font-style:italic}
 .hidden{display:none!important}
-@media(min-width:600px){.content{max-width:540px;margin:0 auto}.header>*{max-width:540px;margin-left:auto;margin-right:auto}}
+@media(min-width:600px){body{max-width:540px;margin:0 auto}}
 </style>
 </head>
 <body>
@@ -73,28 +159,38 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <h1>📞 St. Joseph's Directory</h1>
   <div class="search-wrap">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" class="search-input" placeholder="Search contacts..." oninput="filterContacts()" id="searchInput">
+    <input type="text" class="search-input" placeholder="Search all contacts…" oninput="filterContacts()" id="searchInput">
   </div>
 </div>
-<div class="content" id="directory-content"></div>
-<div style="text-align:center;padding:24px 16px 8px">
-  <a href="https://forms.gle/PFFs27XwmE9R3WnBA" target="_blank" rel="noopener" style="color:var(--text-dim);font-size:0.82rem;text-decoration:none;opacity:0.7">💬 Have feedback? Let us know</a>
+<div id="quick-strip"></div>
+<div id="pages-outer">
+  <div id="pages-scroll"></div>
+  <div id="search-overlay"></div>
 </div>
+<nav id="tab-bar"></nav>
 <script>
+// ─── Config ─────────────────────────────────────────────────────────────────
 const CALL_SVG='<svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>';
 const BASE='973754';
 const PAGING='9737545678';
+
+const PAGES=[
+  {id:'or',    label:'OR & Anes', emoji:'🏥',color:'#38bdf8',rgb:'56,189,248',  sections:['Main OR','SDS','On-Call Services','PAT Office']},
+  {id:'depts', label:'Depts',     emoji:'🩺',color:'#fb923c',rgb:'251,146,60',  sections:['Departments']},
+  {id:'floors',label:'Floors',    emoji:'🏢',color:'#34d399',rgb:'52,211,153',  sections:['Floors']},
+  {id:'svcs',  label:'Services',  emoji:'🔧',color:'#a78bfa',rgb:'167,139,250', sections:['Services']},
+];
+
 const SECTION_DISPLAY={
-  'Critical':'🚨 Critical / Frequently Used',
-  'Main OR':'🏥 Main OR',
-  'SDS':'🏥 SDS',
-  'Departments':'🏥 Departments',
-  'Floors':'🏢 Floors',
-  'On-Call Services':'📟 On-Call Services',
-  'PAT Office':'🩺 PAT Office',
-  'Services':'🔧 Services'
+  'Main OR':'🏥 Main OR','SDS':'🏥 SDS',
+  'On-Call Services':'📟 On-Call Services','PAT Office':'🩺 PAT Office',
+  'Departments':'🏥 Departments','Floors':'🏢 Floors','Services':'🔧 Services'
 };
 
+let allRows=[];
+let currentPageIdx=0;
+
+// ─── Utilities ───────────────────────────────────────────────────────────────
 function htmlEsc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
 function parseCSV(text){
@@ -125,15 +221,16 @@ function buildDetailLines(e){
   if(e.type2&&e.type3){
     lines.push({label:'Ext '+e.type2+' (in-hospital)',href:'tel:'+BASE+e.type2});
     lines.push({label:'Ext '+e.type3+' (external: 973-754-'+e.type3+')',href:'tel:'+BASE+e.type3});
-  } else if(e.type2){
+  }else if(e.type2){
     lines.push({label:'Ext '+e.type2+' · 973-754-'+e.type2,href:'tel:'+BASE+e.type2});
-  } else if(e.type3){
+  }else if(e.type3){
     lines.push({label:'Ext '+e.type3+' (external: 973-754-'+e.type3+')',href:'tel:'+BASE+e.type3});
   }
   if(e.type4) lines.push({label:'Pager '+e.type4,href:'tel:'+PAGING});
   return lines;
 }
 
+// ─── Row rendering ───────────────────────────────────────────────────────────
 function createContactRow(entry){
   const div=document.createElement('div');
   div.className='phone-row'+(entry.urgent?' urgent':'');
@@ -142,45 +239,25 @@ function createContactRow(entry){
   let detailHTML='';
   if(detailLines.length){
     detailHTML='<div class="phone-detail"><div class="phone-detail-inner">'+
-      detailLines.map(l=>
-        '<div class="detail-line"><span class="detail-label">'+htmlEsc(l.label)+
-        '</span><a href="'+l.href+'" class="detail-call-btn">'+CALL_SVG+'Call</a></div>'
-      ).join('')+
+      detailLines.map(l=>'<div class="detail-line"><span class="detail-label">'+htmlEsc(l.label)+
+        '</span><a href="'+l.href+'" class="detail-call-btn">'+CALL_SVG+'Call</a></div>').join('')+
       '</div></div>';
   }
-  div.innerHTML=
-    '<span class="phone-label">'+htmlEsc(entry.label)+'</span>'+
-    '<a href="'+primaryHref(entry)+'" class="phone-number">'+CALL_SVG+'Call</a>'+
-    detailHTML;
+  div.innerHTML='<span class="phone-label">'+htmlEsc(entry.label)+'</span>'+
+    '<a href="'+primaryHref(entry)+'" class="phone-number">'+CALL_SVG+'Call</a>'+detailHTML;
   return div;
 }
 
 function toggleExpand(rowEl){
   const wasOpen=rowEl.classList.contains('open');
-  const inner=rowEl.closest('.accordion-body-inner');
-  if(inner) inner.querySelectorAll('.phone-row.open').forEach(r=>r.classList.remove('open'));
+  const container=rowEl.closest('.accordion-body-inner,.search-card');
+  if(container) container.querySelectorAll('.phone-row.open').forEach(r=>r.classList.remove('open'));
   if(!wasOpen) rowEl.classList.add('open');
 }
 
 function toggleAccordion(header){header.parentElement.classList.toggle('open')}
 
-function buildCriticalSection(rows){
-  const sec=document.createElement('div');
-  sec.className='critical-section';
-  sec.dataset.accordion='';
-  const grid=document.createElement('div');
-  grid.className='critical-grid';
-  rows.forEach(e=>{
-    const a=document.createElement('a');
-    a.href=primaryHref(e);
-    a.className='crit-btn'+(e.urgent?' urgent':'');
-    a.textContent=e.label;
-    grid.appendChild(a);
-  });
-  sec.appendChild(grid);
-  return sec;
-}
-
+// ─── Section builders ────────────────────────────────────────────────────────
 function buildAccordion(sectionName,rows){
   const acc=document.createElement('div');
   acc.className='accordion';
@@ -196,96 +273,148 @@ function buildAccordion(sectionName,rows){
   rows.forEach(entry=>{
     if(entry.subsection&&entry.subsection!==currentSub){
       currentSub=entry.subsection;
-      const sh=document.createElement('div');
-      sh.className='sub-header';
-      sh.textContent=currentSub;
+      const sh=document.createElement('div');sh.className='sub-header';sh.textContent=currentSub;
       inner.appendChild(sh);
       if(currentSub==='Regan'){
-        const note=document.createElement('div');
-        note.className='regan-note';
+        const note=document.createElement('div');note.className='regan-note';
         note.textContent='Rooms <50 = North wing · Rooms ≥50 = South wing';
         inner.appendChild(note);
       }
     }
     if(entry.label==='To Page (dial then pager #)'){
-      const row=document.createElement('div');
-      row.className='phone-row placeholder';
-      const lbl=document.createElement('span');
-      lbl.className='phone-label';
-      lbl.textContent=entry.label;
-      const ext=document.createElement('span');
-      ext.className='phone-number';
-      ext.textContent='Ext '+entry.type2;
-      row.appendChild(lbl);
-      row.appendChild(ext);
-      inner.appendChild(row);
-    } else {
+      const row=document.createElement('div');row.className='phone-row placeholder';
+      const lbl=document.createElement('span');lbl.className='phone-label';lbl.textContent=entry.label;
+      const ext=document.createElement('span');ext.className='phone-number';ext.textContent='Ext '+entry.type2;
+      row.appendChild(lbl);row.appendChild(ext);inner.appendChild(row);
+    }else{
       inner.appendChild(createContactRow(entry));
     }
   });
   return acc;
 }
 
-function buildDirectory(rows){
-  const container=document.getElementById('directory-content');
-  const sections={};
-  rows.forEach(r=>{
-    if(!sections[r.section]) sections[r.section]=[];
-    sections[r.section].push(r);
+function buildPage(cfg,sectionMap){
+  const page=document.createElement('div');
+  page.className='page';
+  page.dataset.pageIdx=PAGES.indexOf(cfg);
+  page.style.setProperty('--accent',cfg.color);
+  page.style.setProperty('--accent-rgb',cfg.rgb);
+  cfg.sections.forEach(name=>{
+    if(sectionMap[name]) page.appendChild(buildAccordion(name,sectionMap[name]));
   });
-  if(sections['Critical']) container.appendChild(buildCriticalSection(sections['Critical']));
-  Object.keys(SECTION_DISPLAY).slice(1).forEach(name=>{
-    if(sections[name]) container.appendChild(buildAccordion(name,sections[name]));
-  });
-  const nr=document.createElement('div');
-  nr.className='no-results';
-  nr.id='no-results';
-  nr.textContent='No contacts found';
-  container.appendChild(nr);
+  if(cfg.id==='svcs'){
+    const fb=document.createElement('div');
+    fb.style.cssText='text-align:center;padding:20px 16px 4px';
+    fb.innerHTML='<a href="https://forms.gle/PFFs27XwmE9R3WnBA" target="_blank" rel="noopener" style="color:var(--text-dim);font-size:0.82rem;text-decoration:none;opacity:0.7">💬 Have feedback? Let us know</a>';
+    page.appendChild(fb);
+  }
+  return page;
 }
 
+function buildQuickStrip(rows){
+  const grid=document.createElement('div');grid.className='quick-grid';
+  rows.forEach(e=>{
+    const a=document.createElement('a');
+    a.href=primaryHref(e);
+    a.className='crit-btn'+(e.urgent?' urgent':'');
+    a.textContent=e.label;
+    grid.appendChild(a);
+  });
+  document.getElementById('quick-strip').appendChild(grid);
+}
+
+function buildTabBar(){
+  const bar=document.getElementById('tab-bar');
+  PAGES.forEach((cfg,idx)=>{
+    const btn=document.createElement('button');
+    btn.className='tab-btn'+(idx===0?' active':'');
+    btn.style.setProperty('--tab-color',cfg.color);
+    btn.dataset.idx=idx;
+    btn.innerHTML='<span class="tab-emoji">'+cfg.emoji+'</span><span>'+cfg.label+'</span>';
+    btn.addEventListener('click',()=>goToPage(idx));
+    bar.appendChild(btn);
+  });
+}
+
+// ─── Directory assembly ──────────────────────────────────────────────────────
+function buildDirectory(rows){
+  allRows=rows;
+  const sectionMap={};
+  rows.forEach(r=>{if(!sectionMap[r.section])sectionMap[r.section]=[];sectionMap[r.section].push(r);});
+  if(sectionMap['Critical']) buildQuickStrip(sectionMap['Critical']);
+  const scroll=document.getElementById('pages-scroll');
+  PAGES.forEach(cfg=>scroll.appendChild(buildPage(cfg,sectionMap)));
+  buildTabBar();
+  initPageObserver();
+}
+
+// ─── Navigation ──────────────────────────────────────────────────────────────
+function goToPage(idx){
+  const scroll=document.getElementById('pages-scroll');
+  scroll.scrollTo({left:idx*scroll.offsetWidth,behavior:'smooth'});
+  updateActiveTab(idx);
+}
+
+function updateActiveTab(idx){
+  if(idx===currentPageIdx) return;
+  currentPageIdx=idx;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  const cfg=PAGES[idx];
+  document.documentElement.style.setProperty('--accent',cfg.color);
+  document.documentElement.style.setProperty('--accent-rgb',cfg.rgb);
+}
+
+function initPageObserver(){
+  const scroll=document.getElementById('pages-scroll');
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting&&e.intersectionRatio>=0.5) updateActiveTab(+e.target.dataset.pageIdx);
+    });
+  },{root:scroll,threshold:0.5});
+  scroll.querySelectorAll('.page').forEach(p=>obs.observe(p));
+}
+
+// ─── Search ──────────────────────────────────────────────────────────────────
 function filterContacts(){
   const query=document.getElementById('searchInput').value.toLowerCase().trim();
-  const accordions=document.getElementById('directory-content').querySelectorAll('[data-accordion]');
-  let totalVisible=0;
-  accordions.forEach(acc=>{
-    const rows=acc.querySelectorAll('.phone-row:not(.placeholder),.crit-btn');
-    const subHeaders=acc.querySelectorAll('.sub-header');
-    let accVisible=0;
-    rows.forEach(row=>{
-      const label=((row.querySelector('.phone-label')||row).textContent+' '+(row.dataset.search||'')).toLowerCase();
-      const match=!query||label.includes(query);
-      row.classList.toggle('hidden',!match);
-      if(match) accVisible++;
+  const overlay=document.getElementById('search-overlay');
+  if(!query){overlay.classList.remove('visible');return;}
+  overlay.classList.add('visible');
+  overlay.innerHTML='';
+  let total=0;
+  PAGES.forEach(cfg=>{
+    const hits=allRows.filter(r=>{
+      if(!cfg.sections.includes(r.section)||r.label==='To Page (dial then pager #)') return false;
+      return(r.label+' '+(r.search||'')).toLowerCase().includes(query);
     });
-    subHeaders.forEach(sh=>{
-      let next=sh.nextElementSibling;
-      let anyVisible=false;
-      while(next&&!next.classList.contains('sub-header')){
-        if((next.classList.contains('phone-row')||next.classList.contains('crit-btn'))&&!next.classList.contains('hidden')){anyVisible=true;break;}
-        next=next.nextElementSibling;
-      }
-      sh.classList.toggle('hidden',!anyVisible);
-    });
-    acc.querySelectorAll('.regan-note').forEach(note=>{
-      const prev=note.previousElementSibling;
-      note.classList.toggle('hidden',prev&&prev.classList.contains('hidden'));
-    });
-    acc.classList.toggle('hidden',accVisible===0&&query.length>0);
-    if(query&&accVisible>0) acc.classList.add('open');
-    totalVisible+=accVisible;
+    if(!hits.length) return;
+    const lbl=document.createElement('div');
+    lbl.className='search-group-label';lbl.textContent=cfg.label;
+    lbl.style.setProperty('--group-color',cfg.color);
+    overlay.appendChild(lbl);
+    const card=document.createElement('div');
+    card.className='search-card';
+    card.style.setProperty('--card-rgb',cfg.rgb);
+    card.style.setProperty('--accent',cfg.color);
+    card.style.setProperty('--accent-rgb',cfg.rgb);
+    hits.forEach(e=>card.appendChild(createContactRow(e)));
+    overlay.appendChild(card);
+    total+=hits.length;
   });
-  const nr=document.getElementById('no-results');
-  if(nr) nr.classList.toggle('visible',totalVisible===0&&query.length>0);
+  if(!total){
+    const nr=document.createElement('div');nr.className='no-results visible';
+    nr.textContent='No contacts found';overlay.appendChild(nr);
+  }
 }
 
+// ─── Bootstrap ───────────────────────────────────────────────────────────────
 async function loadContacts(){
   try{
     const res=await fetch('data/contacts.csv');
     if(!res.ok) throw new Error('HTTP '+res.status);
     buildDirectory(parseCSV(await res.text()));
-  } catch(err){
-    document.getElementById('directory-content').innerHTML=
+  }catch(err){
+    document.getElementById('pages-outer').innerHTML=
       '<div style="text-align:center;padding:40px 20px;color:var(--text-dim)">Failed to load contacts. Please refresh.<br><small style="opacity:0.6">'+htmlEsc(String(err))+'</small></div>';
   }
 }
@@ -297,7 +426,7 @@ document.addEventListener('click',e=>{
 
 document.addEventListener('DOMContentLoaded',()=>{
   loadContacts();
-  document.getElementById('directory-content').addEventListener('click',e=>{
+  document.getElementById('pages-outer').addEventListener('click',e=>{
     if(e.target.closest('.phone-number,.detail-call-btn')) return;
     const row=e.target.closest('.phone-row');
     if(row&&!row.classList.contains('placeholder')) toggleExpand(row);
