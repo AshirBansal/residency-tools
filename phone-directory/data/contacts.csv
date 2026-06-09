@@ -1,11 +1,6 @@
 section,subsection,label,type1,type2,type3,type4,urgent,search
-Critical,,Board Runner,,5933,,,true,
-Critical,,Blood Bank,,3535,,,true,
-Critical,,Security,,5555,,,true,
-Critical,,Operator,,3330,,,false,
-Critical,,Pharmacy,,3032,,,false,
+Critical,,5933,,5933,,,true,
 Critical,,Anes Tech—Main OR,,5743,,,false,
-Critical,,Anes Tech—OB,,3852,,,false,
 Critical,,Anes Tech—SDS,,5741,,,false,
 Main OR,,Attending,,5933,,,false,
 Main OR,,PreOp,,3419,,,false,

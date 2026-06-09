@@ -166,10 +166,6 @@ function buildCriticalSection(rows){
   const sec=document.createElement('div');
   sec.className='critical-section';
   sec.dataset.accordion='';
-  const hdr=document.createElement('div');
-  hdr.className='critical-header';
-  hdr.textContent=SECTION_DISPLAY['Critical'];
-  sec.appendChild(hdr);
   const grid=document.createElement('div');
   grid.className='critical-grid';
   rows.forEach(e=>{
