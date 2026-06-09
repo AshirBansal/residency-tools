@@ -111,6 +111,8 @@ body{
 .crit-btn:active{background:var(--surface-hover);box-shadow:none}
 .crit-btn.urgent{color:var(--danger);border-color:rgba(248,113,113,0.3);background:rgba(248,113,113,0.08)}
 .crit-btn.urgent:active{background:rgba(248,113,113,0.15)}
+.crit-main{display:block}
+.crit-sub{display:block;font-size:0.72rem;font-weight:500;opacity:0.7;margin-top:1px}
 /* ── Accordion ── */
 .accordion{margin-bottom:8px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);transition:border-color 0.25s,box-shadow 0.25s}
 .accordion.open{border-color:rgba(var(--accent-rgb),0.28);box-shadow:0 6px 28px rgba(0,0,0,0.5)}
@@ -175,16 +177,19 @@ const BASE='973754';
 const PAGING='9737545678';
 
 const PAGES=[
-  {id:'or',    label:'OR & Anes', emoji:'🏥',color:'#38bdf8',rgb:'56,189,248',  sections:['Main OR','SDS','On-Call Services','PAT Office']},
-  {id:'depts', label:'Depts',     emoji:'🩺',color:'#fb923c',rgb:'251,146,60',  sections:['Departments']},
+  {id:'or',    label:'OR & Anes', emoji:'🏥',color:'#38bdf8',rgb:'56,189,248',  sections:['Main OR','SDS','Anes On-Call','PAT Office']},
+  {id:'depts', label:'Depts',     emoji:'🩺',color:'#fb923c',rgb:'251,146,60',  sections:['Departments','On-Call Services']},
   {id:'floors',label:'Floors',    emoji:'🏢',color:'#34d399',rgb:'52,211,153',  sections:['Floors']},
   {id:'svcs',  label:'Services',  emoji:'🔧',color:'#a78bfa',rgb:'167,139,250', sections:['Services']},
 ];
 
 const SECTION_DISPLAY={
   'Main OR':'🏥 Main OR','SDS':'🏥 SDS',
-  'On-Call Services':'📟 On-Call Services','PAT Office':'🩺 PAT Office',
-  'Departments':'🏥 Departments','Floors':'🏢 Floors','Services':'🔧 Services'
+  'Anes On-Call':'🔔 Anes On-Call',
+  'PAT Office':'🩺 PAT Office',
+  'Departments':'🏥 Departments',
+  'On-Call Services':'📟 On-Call Services',
+  'Floors':'🏢 Floors','Services':'🔧 Services'
 };
 
 let allRows=[];
@@ -317,7 +322,12 @@ function buildQuickStrip(rows){
     const a=document.createElement('a');
     a.href=primaryHref(e);
     a.className='crit-btn'+(e.urgent?' urgent':'');
-    a.textContent=e.label;
+    const parts=e.label.split('|');
+    if(parts.length>1){
+      a.innerHTML='<span class="crit-main">'+htmlEsc(parts[0])+'</span><span class="crit-sub">'+htmlEsc(parts[1])+'</span>';
+    }else{
+      a.textContent=e.label;
+    }
     grid.appendChild(a);
   });
   document.getElementById('quick-strip').appendChild(grid);
