@@ -9,262 +9,302 @@
 <meta name="theme-color" content="#0f172a">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
+<title>📞 St. Joseph's Directory</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700&family=JetBrains+Mono:wght@400;600&display=swap');
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  :root{--bg:#0f172a;--surface:#1e293b;--surface-hover:#273548;--border:#334155;--text:#f1f5f9;--text-dim:#94a3b8;--accent-joe:#38bdf8;--accent-joe-dim:rgba(56,189,248,0.12);--accent-mike:#a78bfa;--accent-mike-dim:rgba(167,139,250,0.12);--phone-color:#4ade80;--danger:#f87171;--radius:12px}
-  html{font-size:15px}
-  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;padding-bottom:env(safe-area-inset-bottom,20px);-webkit-font-smoothing:antialiased}
-  .header{position:sticky;top:0;z-index:100;background:rgba(15,23,42,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 16px 12px}
-  .header h1{font-size:1.4rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:12px;text-align:center}
-  .selector-prompt{font-size:0.95rem;color:var(--text-dim);margin-bottom:28px;padding:0 4px}
-  #selector-screen{min-height:calc(100dvh - 70px);display:flex;flex-direction:column;justify-content:center;padding:24px 16px}
-  .dept-group{margin-bottom:32px}
-  .dept-group-label{font-size:1.1rem;font-weight:700;color:var(--text-dim);letter-spacing:-0.01em;margin-bottom:12px;padding:0 4px}
-  .dept-card{width:100%;display:flex;flex-direction:column;align-items:flex-start;padding:18px 20px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);cursor:pointer;margin-bottom:10px;transition:background 0.15s;font-family:inherit;text-align:left}
-  .dept-card:active{background:var(--surface-hover)}
-  .dept-card-joe{border-color:rgba(56,189,248,0.3)}
-  .dept-card-joe:active,.dept-card-joe:focus{background:var(--accent-joe-dim)}
-  .dept-card-mike{border-color:rgba(167,139,250,0.3)}
-  .dept-card-mike:active,.dept-card-mike:focus{background:var(--accent-mike-dim)}
-  .dept-card-site{font-size:1.1rem;font-weight:700;letter-spacing:-0.02em}
-  .dept-card-joe .dept-card-site{color:var(--accent-joe)}
-  .dept-card-mike .dept-card-site{color:var(--accent-mike)}
-  .dept-card-sub{font-size:0.8rem;color:var(--text-dim);margin-top:3px}
-  #breadcrumb{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:0 2px}
-  #breadcrumb-text{font-size:0.9rem;font-weight:600;color:var(--text)}
-  #breadcrumb button{background:none;border:none;font-family:inherit;font-size:0.85rem;color:var(--text-dim);cursor:pointer;padding:4px 0;-webkit-tap-highlight-color:transparent}
-  .search-wrap{position:relative}
-  .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);pointer-events:none}
-  .search-input{width:100%;padding:10px 12px 10px 38px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:0.93rem;outline:none;transition:border-color 0.2s}
-  .search-input::placeholder{color:var(--text-dim);opacity:0.6}
-  .search-input:focus{border-color:var(--accent-joe)}
-  body.site-mike .search-input:focus{border-color:var(--accent-mike)}
-  .content{padding:12px 12px 40px}
-  .site-panel{display:none}.site-panel.active{display:block}
-  .base-badge{display:none}
-  .critical-section{margin-bottom:8px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
-  .critical-header{padding:10px 14px;background:var(--surface);font-size:0.95rem;font-weight:700;letter-spacing:-0.01em;border-bottom:1px solid var(--border)}
-  .site-joe .critical-header{color:var(--accent-joe)}
-  .site-mike .critical-header{color:var(--accent-mike)}
-  .critical-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px;background:var(--surface)}
-  .crit-btn{display:flex;align-items:center;justify-content:center;text-align:center;padding:10px 6px;border-radius:8px;background:rgba(255,255,255,0.04);color:var(--text);font-family:inherit;font-size:0.8rem;font-weight:600;text-decoration:none;line-height:1.25;min-height:48px;border:1px solid var(--border);-webkit-user-select:none;user-select:none;transition:background 0.15s}
-  .crit-btn:active{background:var(--surface-hover)}
-  .crit-btn.urgent{color:var(--danger);border-color:rgba(248,113,113,0.25);background:rgba(248,113,113,0.07)}
-  .crit-btn.urgent:active{background:rgba(248,113,113,0.15)}
-  .accordion{margin-bottom:8px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
-  .accordion-header{display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--surface);cursor:pointer;-webkit-user-select:none;user-select:none;transition:background 0.15s}
-  .accordion-header:active{background:var(--surface-hover)}
-  .accordion-title{font-size:0.95rem;font-weight:700;letter-spacing:-0.01em}
-  .site-joe .accordion-title{color:var(--accent-joe)}
-  .site-mike .accordion-title{color:var(--accent-mike)}
-  .accordion-chevron{width:20px;height:20px;color:var(--text-dim);transition:transform 0.25s ease;flex-shrink:0}
-  .accordion.open .accordion-chevron{transform:rotate(180deg)}
-  .accordion-body{max-height:0;overflow:hidden;transition:max-height 0.3s ease;background:var(--surface)}
-  .accordion.open .accordion-body{max-height:2000px}
-  .accordion-body-inner{border-top:1px solid var(--border)}
-  .sub-header{padding:8px 14px 4px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.04)}
-  .sub-header:first-child{border-top:none}
-  .phone-row{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.15s;text-decoration:none;color:inherit;-webkit-user-select:none;user-select:none}
-  .phone-row:last-child{border-bottom:none}
-  .phone-row:active{background:var(--surface-hover)}
-  .phone-label{font-size:0.9rem;font-weight:500;color:var(--text);flex:1;padding-right:12px;line-height:1.3}
-  .phone-number{font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:600;color:var(--phone-color);white-space:nowrap;display:flex;align-items:center;gap:6px;text-decoration:none;background:rgba(74,222,128,0.10);padding:5px 9px;border-radius:7px}
-  .phone-number .call-icon{width:18px;height:18px;opacity:0.85;flex-shrink:0}
-  .phone-row.urgent .phone-label{color:var(--danger);font-weight:700}
-  .phone-row.urgent .phone-number{color:var(--danger);background:rgba(248,113,113,0.10)}
-  .phone-row.placeholder{pointer-events:none}
-  .phone-row.placeholder .phone-number{color:var(--text-dim);text-decoration:none;font-style:italic;font-weight:400}
-  .no-results{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:0.95rem;display:none}
-  .no-results.visible{display:block}
-  .regan-note{font-size:0.72rem;color:var(--text-dim);padding:4px 14px 6px;font-style:italic}
-  .hidden{display:none!important}
-  @media(min-width:600px){.content{max-width:540px;margin:0 auto}#selector-screen{max-width:540px;margin:0 auto}.header>*{max-width:540px;margin-left:auto;margin-right:auto}}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700&family=JetBrains+Mono:wght@400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0f172a;--surface:#1e293b;--surface-hover:#273548;--border:#334155;--text:#f1f5f9;--text-dim:#94a3b8;--accent:#38bdf8;--phone-color:#4ade80;--danger:#f87171;--radius:12px}
+html{font-size:15px}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;padding-bottom:env(safe-area-inset-bottom,20px);-webkit-font-smoothing:antialiased}
+.header{position:sticky;top:0;z-index:100;background:rgba(15,23,42,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 16px 12px}
+.header h1{font-size:1.4rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:12px;text-align:center}
+.search-wrap{position:relative}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);pointer-events:none}
+.search-input{width:100%;padding:10px 12px 10px 38px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:0.93rem;outline:none;transition:border-color 0.2s}
+.search-input::placeholder{color:var(--text-dim);opacity:0.6}
+.search-input:focus{border-color:var(--accent)}
+.content{padding:12px 12px 40px}
+.critical-section{margin-bottom:8px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+.critical-header{padding:10px 14px;background:var(--surface);font-size:0.95rem;font-weight:700;letter-spacing:-0.01em;border-bottom:1px solid var(--border);color:var(--accent)}
+.critical-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px;background:var(--surface)}
+.crit-btn{display:flex;align-items:center;justify-content:center;text-align:center;padding:10px 6px;border-radius:8px;background:rgba(255,255,255,0.04);color:var(--text);font-family:inherit;font-size:0.8rem;font-weight:600;text-decoration:none;line-height:1.25;min-height:48px;border:1px solid var(--border);-webkit-user-select:none;user-select:none;transition:background 0.15s}
+.crit-btn:active{background:var(--surface-hover)}
+.crit-btn.urgent{color:var(--danger);border-color:rgba(248,113,113,0.25);background:rgba(248,113,113,0.07)}
+.crit-btn.urgent:active{background:rgba(248,113,113,0.15)}
+.accordion{margin-bottom:8px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+.accordion-header{display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--surface);cursor:pointer;-webkit-user-select:none;user-select:none;transition:background 0.15s}
+.accordion-header:active{background:var(--surface-hover)}
+.accordion-title{font-size:0.95rem;font-weight:700;letter-spacing:-0.01em;color:var(--accent)}
+.accordion-chevron{width:20px;height:20px;color:var(--text-dim);transition:transform 0.25s ease;flex-shrink:0}
+.accordion.open .accordion-chevron{transform:rotate(180deg)}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height 0.3s ease;background:var(--surface)}
+.accordion.open .accordion-body{max-height:3000px}
+.accordion-body-inner{border-top:1px solid var(--border)}
+.sub-header{padding:8px 14px 4px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.04)}
+.sub-header:first-child{border-top:none}
+.phone-row{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.15s;color:inherit;-webkit-user-select:none;user-select:none;cursor:pointer;flex-wrap:wrap}
+.phone-row:last-child{border-bottom:none}
+.phone-row:not(.placeholder):active{background:var(--surface-hover)}
+.phone-label{font-size:0.9rem;font-weight:500;color:var(--text);flex:1;padding-right:12px;line-height:1.3}
+.phone-number{font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:600;color:var(--phone-color);white-space:nowrap;display:flex;align-items:center;gap:6px;text-decoration:none;background:rgba(74,222,128,0.10);padding:5px 9px;border-radius:7px}
+.phone-number .call-icon{width:18px;height:18px;opacity:0.85;flex-shrink:0}
+.phone-row.urgent .phone-label{color:var(--danger);font-weight:700}
+.phone-row.urgent .phone-number{color:var(--danger);background:rgba(248,113,113,0.10)}
+.phone-row.placeholder{pointer-events:none;cursor:default}
+.phone-row.placeholder .phone-number{color:var(--text-dim);font-style:italic;font-weight:400;background:transparent;border:1px dashed var(--border)}
+.phone-detail{width:100%;max-height:0;overflow:hidden;transition:max-height 0.25s ease;border-top-width:0}
+.phone-row.open .phone-detail{max-height:400px;border-top:1px solid rgba(255,255,255,0.06)}
+.detail-line{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.detail-line:last-child{border-bottom:none}
+.detail-label{font-size:0.82rem;color:var(--text-dim);flex:1;padding-right:10px}
+.detail-call-btn{font-family:'JetBrains Mono',monospace;font-size:0.8rem;font-weight:600;color:var(--phone-color);background:rgba(74,222,128,0.10);padding:4px 10px;border-radius:6px;text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.detail-call-btn .call-icon{width:15px;height:15px;opacity:0.85;flex-shrink:0}
+.no-results{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:0.95rem;display:none}
+.no-results.visible{display:block}
+.regan-note{font-size:0.72rem;color:var(--text-dim);padding:4px 14px 6px;font-style:italic}
+.hidden{display:none!important}
+@media(min-width:600px){.content{max-width:540px;margin:0 auto}.header>*{max-width:540px;margin-left:auto;margin-right:auto}}
 </style>
 </head>
 <body>
 <div class="header">
-  <h1>📞 Hospital Directory</h1>
-  <div id="breadcrumb" style="display:none"><span id="breadcrumb-text"></span><button onclick="showSelector()">← Change</button></div>
-  <div class="search-wrap" id="search-wrap" style="display:none">
+  <h1>📞 St. Joseph's Directory</h1>
+  <div class="search-wrap">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input type="text" class="search-input" placeholder="Search contacts..." oninput="filterContacts()" id="searchInput">
   </div>
 </div>
-<div id="selector-screen">
-  <p class="selector-prompt">Choose a site to get started</p>
-  <div class="dept-group">
-    <div class="dept-group-label">🩺 Anesthesia</div>
-    <button class="dept-card dept-card-joe" onclick="selectView('anesthesia','joe')">
-      <span class="dept-card-site">St. Joe's</span>
-      <span class="dept-card-sub">St. Joseph's Medical Center</span>
-    </button>
-    <button class="dept-card dept-card-mike" onclick="selectView('anesthesia','mike')">
-      <span class="dept-card-site">St. Mike's</span>
-      <span class="dept-card-sub">St. Michael's Medical Center</span>
-    </button>
-  </div>
-</div>
-<div class="content" id="directory-content" style="display:none">
-
-<!-- ST. JOE'S -->
-<div class="site-panel site-joe" id="panel-joe">
-<div class="base-badge">Base: (973) 754 + ext</div>
-
-<div class="critical-section" data-accordion>
-<div class="critical-header">🚨 Critical / Frequently Used</div>
-<div class="critical-grid">
-<a href="tel:9737545933" class="crit-btn urgent">Board Runner</a>
-<a href="tel:9737543535" class="crit-btn urgent">Blood Bank</a>
-<a href="tel:9737545555" class="crit-btn urgent">Security</a>
-<a href="tel:9737543330" class="crit-btn">Operator</a>
-<a href="tel:9737543032" class="crit-btn">Pharmacy</a>
-<a href="tel:9737545743" class="crit-btn">Anes Tech — Main OR</a>
-<a href="tel:9737543852" class="crit-btn">Anes Tech — OB</a>
-<a href="tel:9737545741" class="crit-btn">Anes Tech — SDS</a>
-</div>
-</div>
-
-<div class="accordion" data-accordion><div class="accordion-header" onclick="toggleAccordion(this)"><span class="accordion-title">🏥 Main OR</span><svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="accordion-body"><div class="accordion-body-inner">
-<a href="tel:9737545933" class="phone-row"><span class="phone-label">Attending</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5933</span></a>
-<a href="tel:9737543419" class="phone-row"><span class="phone-label">PreOp</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3419</span></a>
-<a href="tel:9737543418" class="phone-row"><span class="phone-label">Front Desk</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3418</span></a>
-<a href="tel:9737543430" class="phone-row"><span class="phone-label">PACU</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3430</span></a>
-<a href="tel:9737543985" class="phone-row"><span class="phone-label">Charge RN</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3985</span></a>
-<a href="tel:9737545743" class="phone-row"><span class="phone-label">Anes Tech</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5743</span></a>
-<a href="tel:9737545933" class="phone-row"><span class="phone-label">Board Runner</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5933</span></a>
-</div></div></div>
-
-<div class="accordion" data-accordion><div class="accordion-header" onclick="toggleAccordion(this)"><span class="accordion-title">🏥 SDS</span><svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="accordion-body"><div class="accordion-body-inner">
-<a href="tel:9737545733" class="phone-row"><span class="phone-label">Attending</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5733</span></a>
-<a href="tel:9737543400" class="phone-row"><span class="phone-label">PreOp</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3400</span></a>
-<a href="tel:9737543720" class="phone-row"><span class="phone-label">PACU</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3720</span></a>
-<a href="tel:9737543984" class="phone-row"><span class="phone-label">Charge RN</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3984</span></a>
-<a href="tel:9737545741" class="phone-row"><span class="phone-label">Anes Tech</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5741</span></a>
-</div></div></div>
-
-<div class="accordion" data-accordion><div class="accordion-header" onclick="toggleAccordion(this)"><span class="accordion-title">🏥 Departments</span><svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="accordion-body"><div class="accordion-body-inner">
-<a href="tel:9737542222" class="phone-row"><span class="phone-label">ED</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>2222</span></a>
-<a href="tel:9737541818" class="phone-row"><span class="phone-label">Trauma</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>1818</span></a>
-<a href="tel:9737543320" class="phone-row"><span class="phone-label">PICU</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3320</span></a>
-<a href="tel:9737543360" class="phone-row"><span class="phone-label">NICU</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3360</span></a>
-<a href="tel:9737542390" class="phone-row"><span class="phone-label">Endo</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>2390</span></a>
-<a href="tel:9737543535" class="phone-row"><span class="phone-label">Blood Bank</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3535</span></a>
-</div></div></div>
-
-<div class="accordion" data-accordion><div class="accordion-header" onclick="toggleAccordion(this)"><span class="accordion-title">🏢 Floors</span><svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="accordion-body"><div class="accordion-body-inner">
-<div class="sub-header">CCB</div>
-<a href="tel:9737543260" class="phone-row"><span class="phone-label">2 North</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3260</span></a>
-<a href="tel:9737543420" class="phone-row"><span class="phone-label">2 South</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3420</span></a>
-<a href="tel:9737543375" class="phone-row"><span class="phone-label">3 North</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3375</span></a>
-<a href="tel:9737543385" class="phone-row"><span class="phone-label">3 South</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3385</span></a>
-<div class="sub-header">Regan</div>
-<div class="regan-note">Rooms &lt;50 = North wing &nbsp;·&nbsp; Rooms ≥50 = South wing</div>
-<a href="tel:9737542656" class="phone-row"><span class="phone-label">3 North</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>2656</span></a>
-<a href="tel:9737543210" class="phone-row"><span class="phone-label">3 South</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3210</span></a>
-<a href="tel:9737543350" class="phone-row"><span class="phone-label">4 North</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3350</span></a>
-<a href="tel:9737543247" class="phone-row"><span class="phone-label">4 South</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3247</span></a>
-<a href="tel:9737543225" class="phone-row"><span class="phone-label">5 North</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3225</span></a>
-<a href="tel:9737543250" class="phone-row"><span class="phone-label">5 South</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3250</span></a>
-<a href="tel:9737543285" class="phone-row"><span class="phone-label">6 North</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3285</span></a>
-<a href="tel:9737543275" class="phone-row"><span class="phone-label">6 South</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3275</span></a>
-<div class="sub-header">Seton</div>
-<a href="tel:9737543390" class="phone-row"><span class="phone-label">S1</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3390</span></a>
-<a href="tel:9737543636" class="phone-row"><span class="phone-label">S3</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3636</span></a>
-<a href="tel:9737543300" class="phone-row"><span class="phone-label">S4 North</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3300</span></a>
-<a href="tel:9737543325" class="phone-row"><span class="phone-label">S4 South (Peds)</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3325</span></a>
-<a href="tel:9737543801" class="phone-row"><span class="phone-label">S6 North (Ortho)</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3801</span></a>
-<a href="tel:9737543660" class="phone-row"><span class="phone-label">S6 South (Stepdown)</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3660</span></a>
-<a href="tel:9737543340" class="phone-row" data-search="labor delivery obstetrics ob"><span class="phone-label">L&amp;D</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3340</span></a>
-</div></div></div>
-
-<div class="accordion" data-accordion><div class="accordion-header" onclick="toggleAccordion(this)"><span class="accordion-title">📟 On-Call Services</span><svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="accordion-body"><div class="accordion-body-inner">
-<a href="tel:9737545678" class="phone-row"><span class="phone-label">To Page (dial, then pager #)</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5678</span></a>
-<a href="tel:9737545678" class="phone-row"><span class="phone-label">Ortho Resident</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>pg 0002</span></a>
-<a href="tel:9737545678" class="phone-row"><span class="phone-label">OMFS Resident</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>pg 0132</span></a>
-<a href="tel:9737543838" class="phone-row"><span class="phone-label">SICU Resident</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3838</span></a>
-<a href="tel:9737545678" class="phone-row"><span class="phone-label">OB Resident</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>pg 0123</span></a>
-<a href="tel:9737545678" class="phone-row"><span class="phone-label">PAT Pager</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>pg 0041</span></a>
-<a href="tel:9737545678" class="phone-row"><span class="phone-label">Pain Pager</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>pg 0288</span></a>
-<a href="tel:9737543964" class="phone-row"><span class="phone-label">OB Anesthesia Phone</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3964</span></a>
-<a href="tel:2019576547" class="phone-row"><span class="phone-label">Code/Airway Phone</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>201-957-6547</span></a>
-</div></div></div>
-
-<div class="accordion" data-accordion><div class="accordion-header" onclick="toggleAccordion(this)"><span class="accordion-title">🩺 PAT Office</span><svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="accordion-body"><div class="accordion-body-inner">
-<div class="sub-header">Office</div>
-<a href="tel:9737542215" class="phone-row"><span class="phone-label">PAT Office</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>2215</span></a>
-<a href="tel:9737542213" class="phone-row"><span class="phone-label">PAT Office (alt)</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>2213</span></a>
-<a href="tel:9737543890" class="phone-row"><span class="phone-label">Registrar / Iris / Shayna</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3890</span></a>
-<div class="sub-header">PAT Nurses</div>
-<a href="tel:9737543822" class="phone-row"><span class="phone-label">Louis — A B C E</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3822</span></a>
-<a href="tel:9737543892" class="phone-row"><span class="phone-label">Kevin — J K L M N O</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3892</span></a>
-<a href="tel:9737543891" class="phone-row"><span class="phone-label">Carmen — Q R S T</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3891</span></a>
-<a href="tel:9737543192" class="phone-row"><span class="phone-label">Somy — D F G H I</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3192</span></a>
-<a href="tel:9737543193" class="phone-row"><span class="phone-label">Beth — P U V W X Y Z</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3193</span></a>
-<a href="tel:9737542049" class="phone-row"><span class="phone-label">Patricia — covers</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>2049</span></a>
-<a href="tel:9737543304" class="phone-row"><span class="phone-label">Sheila — Bariatric</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3304</span></a>
-</div></div></div>
-
-<div class="accordion" data-accordion><div class="accordion-header" onclick="toggleAccordion(this)"><span class="accordion-title">🔧 Services</span><svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="accordion-body"><div class="accordion-body-inner">
-<a href="tel:9737543032" class="phone-row"><span class="phone-label">Pharmacy</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3032</span></a>
-<a href="tel:9737545555" class="phone-row"><span class="phone-label">Security</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5555</span></a>
-<a href="tel:9737543330" class="phone-row"><span class="phone-label">Hospital Operator for Physicians</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3330</span></a>
-<a href="tel:9737543997" class="phone-row"><span class="phone-label">Housekeeping</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3997</span></a>
-<a href="tel:9737544494" class="phone-row"><span class="phone-label">IT</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>4494</span></a>
-<a href="tel:9737542785" class="phone-row"><span class="phone-label">EVS</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>2785</span></a>
-</div></div></div>
-
-<div class="no-results" id="no-results-joe">No contacts found</div>
-</div>
-
-<!-- ST. MIKE'S -->
-<div class="site-panel site-mike" id="panel-mike">
-<div class="base-badge">Base: (973) 877 + ext</div>
-
-<div class="critical-section" data-accordion>
-<div class="critical-header">🚨 Critical / Frequently Used</div>
-<div class="critical-grid">
-<a href="tel:9738775000" class="crit-btn">Hospital Operator</a>
-<a href="tel:9738770686" class="crit-btn">Code/Airway Beeper</a>
-</div>
-</div>
-
-<div class="accordion" data-accordion><div class="accordion-header" onclick="toggleAccordion(this)"><span class="accordion-title">🏥 OR / Perioperative</span><svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="accordion-body"><div class="accordion-body-inner">
-<a href="tel:9738775040" class="phone-row"><span class="phone-label">PACU</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5040</span></a>
-<a href="tel:9738775135" class="phone-row"><span class="phone-label">SDS</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5135</span></a>
-<a href="tel:9738775364" class="phone-row"><span class="phone-label">Overnight Charge RN</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5364</span></a>
-<a href="tel:9738772321" class="phone-row"><span class="phone-label">PAT</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>2321</span></a>
-</div></div></div>
-
-<div class="accordion" data-accordion><div class="accordion-header" onclick="toggleAccordion(this)"><span class="accordion-title">🩺 Units</span><svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="accordion-body"><div class="accordion-body-inner">
-<a href="tel:9738775043" class="phone-row"><span class="phone-label">MICU</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5043</span></a>
-<a href="tel:9738775014" class="phone-row"><span class="phone-label">Blood Bank</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5014</span></a>
-</div></div></div>
-
-<div class="accordion" data-accordion><div class="accordion-header" onclick="toggleAccordion(this)"><span class="accordion-title">💊 Pharmacy & Services</span><svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div><div class="accordion-body"><div class="accordion-body-inner">
-<a href="tel:9738775000" class="phone-row"><span class="phone-label">Hospital Operator</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5000</span></a>
-<a href="tel:9738770686" class="phone-row"><span class="phone-label">Code/Airway Beeper</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>0686</span></a>
-<a href="tel:9738773427" class="phone-row"><span class="phone-label">Pharmacy (Millie)</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3427</span></a>
-<a href="tel:9738773467" class="phone-row"><span class="phone-label">Clinical Pharmacist</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>3467</span></a>
-<a href="tel:9738775655" class="phone-row"><span class="phone-label">Call Room Cleaning</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5655</span></a>
-<a href="tel:9738775336" class="phone-row"><span class="phone-label">(516) RM</span><span class="phone-number"><svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>5336</span></a>
-</div></div></div>
-
-<div class="no-results" id="no-results-mike">No contacts found</div>
-</div>
-
+<div class="content" id="directory-content"></div>
 <div style="text-align:center;padding:24px 16px 8px">
-<a href="https://forms.gle/PFFs27XwmE9R3WnBA" target="_blank" rel="noopener" style="color:var(--text-dim);font-size:0.82rem;text-decoration:none;opacity:0.7">💬 Have feedback? Let us know</a>
-</div>
-
+  <a href="https://forms.gle/PFFs27XwmE9R3WnBA" target="_blank" rel="noopener" style="color:var(--text-dim);font-size:0.82rem;text-decoration:none;opacity:0.7">💬 Have feedback? Let us know</a>
 </div>
 <script>
-let currentSite=null;
-document.addEventListener('click',function(e){const link=e.target.closest('a[href^="tel:"]');if(link){e.preventDefault();e.stopPropagation();window.open(link.href,'_self')}},true);
-function selectView(dept,site){currentSite=site;document.body.className=site==='mike'?'site-mike':'';document.querySelectorAll('.site-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-'+site).classList.add('active');const labels={joe:"St. Joe's",mike:"St. Mike's"};const deptLabels={anesthesia:'🩺 Anesthesia'};document.getElementById('breadcrumb-text').textContent=deptLabels[dept]+' · '+labels[site];document.getElementById('selector-screen').style.display='none';document.getElementById('directory-content').style.display='block';document.getElementById('breadcrumb').style.display='flex';document.getElementById('search-wrap').style.display='block'}
-function showSelector(){document.getElementById('selector-screen').style.display='flex';document.getElementById('directory-content').style.display='none';document.getElementById('breadcrumb').style.display='none';document.getElementById('search-wrap').style.display='none';document.getElementById('searchInput').value='';document.body.className='';currentSite=null}
+const CALL_SVG='<svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>';
+const BASE='973754';
+const PAGING='9737545678';
+const SECTION_DISPLAY={
+  'Critical':'🚨 Critical / Frequently Used',
+  'Main OR':'🏥 Main OR',
+  'SDS':'🏥 SDS',
+  'Departments':'🏥 Departments',
+  'Floors':'🏢 Floors',
+  'On-Call Services':'📟 On-Call Services',
+  'PAT Office':'🩺 PAT Office',
+  'Services':'🔧 Services'
+};
+
+function htmlEsc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+function parseCSV(text){
+  const lines=text.trim().split('\n');
+  const headers=lines[0].split(',').map(h=>h.trim());
+  return lines.slice(1).map(line=>{
+    const vals=line.split(',');
+    const obj={};
+    headers.forEach((h,i)=>{obj[h]=(vals[i]||'').trim();});
+    obj.urgent=obj.urgent==='true';
+    return obj;
+  });
+}
+
+function primaryHref(e){
+  if(e.type1) return 'tel:'+e.type1;
+  if(e.type3) return 'tel:'+BASE+e.type3;
+  if(e.type2) return 'tel:'+BASE+e.type2;
+  if(e.type4) return 'tel:'+PAGING;
+  return '#';
+}
+
+function fmtCell(n){return n.slice(0,3)+'-'+n.slice(3,6)+'-'+n.slice(6)}
+
+function buildDetailLines(e){
+  const lines=[];
+  if(e.type1) lines.push({label:'Cell · '+fmtCell(e.type1),href:'tel:'+e.type1});
+  if(e.type2&&e.type3){
+    lines.push({label:'Ext '+e.type2+' (in-hospital)',href:'tel:'+BASE+e.type2});
+    lines.push({label:'Ext '+e.type3+' (external: 973-754-'+e.type3+')',href:'tel:'+BASE+e.type3});
+  } else if(e.type2){
+    lines.push({label:'Ext '+e.type2+' · 973-754-'+e.type2,href:'tel:'+BASE+e.type2});
+  } else if(e.type3){
+    lines.push({label:'Ext '+e.type3+' (external: 973-754-'+e.type3+')',href:'tel:'+BASE+e.type3});
+  }
+  if(e.type4) lines.push({label:'Pager '+e.type4,href:'tel:'+PAGING});
+  return lines;
+}
+
+function createContactRow(entry){
+  const div=document.createElement('div');
+  div.className='phone-row'+(entry.urgent?' urgent':'');
+  if(entry.search) div.dataset.search=entry.search;
+  const detailLines=buildDetailLines(entry);
+  let detailHTML='';
+  if(detailLines.length){
+    detailHTML='<div class="phone-detail">'+
+      detailLines.map(l=>
+        '<div class="detail-line"><span class="detail-label">'+htmlEsc(l.label)+
+        '</span><a href="'+l.href+'" class="detail-call-btn">'+CALL_SVG+'Call</a></div>'
+      ).join('')+
+      '</div>';
+  }
+  div.innerHTML=
+    '<span class="phone-label">'+htmlEsc(entry.label)+'</span>'+
+    '<a href="'+primaryHref(entry)+'" class="phone-number">'+CALL_SVG+'Call</a>'+
+    detailHTML;
+  return div;
+}
+
+function toggleExpand(rowEl){
+  const wasOpen=rowEl.classList.contains('open');
+  const inner=rowEl.closest('.accordion-body-inner');
+  if(inner) inner.querySelectorAll('.phone-row.open').forEach(r=>r.classList.remove('open'));
+  if(!wasOpen) rowEl.classList.add('open');
+}
+
 function toggleAccordion(header){header.parentElement.classList.toggle('open')}
-function filterContacts(){const query=document.getElementById('searchInput').value.toLowerCase().trim();const panel=document.getElementById(`panel-${currentSite}`);const accordions=panel.querySelectorAll('[data-accordion]');let totalVisible=0;accordions.forEach(acc=>{const rows=acc.querySelectorAll('.phone-row,.crit-btn');const subHeaders=acc.querySelectorAll('.sub-header');let accVisible=0;rows.forEach(row=>{const label=((row.querySelector('.phone-label')||row).textContent+(row.dataset.search||'')).toLowerCase();const numEl=row.querySelector('.phone-number');const number=numEl?numEl.textContent.toLowerCase():'';const match=!query||label.includes(query)||number.includes(query);row.classList.toggle('hidden',!match);if(match)accVisible++});subHeaders.forEach(sh=>{let next=sh.nextElementSibling;let anyVisible=false;while(next&&!next.classList.contains('sub-header')){if(next.classList.contains('phone-row')&&!next.classList.contains('hidden')){anyVisible=true;break}next=next.nextElementSibling}sh.classList.toggle('hidden',!anyVisible)});acc.classList.toggle('hidden',accVisible===0&&query.length>0);if(query&&accVisible>0)acc.classList.add('open');totalVisible+=accVisible});const noResults=document.getElementById(`no-results-${currentSite}`);noResults.classList.toggle('visible',totalVisible===0&&query.length>0)}
+
+function buildCriticalSection(rows){
+  const sec=document.createElement('div');
+  sec.className='critical-section';
+  sec.dataset.accordion='';
+  const hdr=document.createElement('div');
+  hdr.className='critical-header';
+  hdr.textContent=SECTION_DISPLAY['Critical'];
+  sec.appendChild(hdr);
+  const grid=document.createElement('div');
+  grid.className='critical-grid';
+  rows.forEach(e=>{
+    const a=document.createElement('a');
+    a.href=primaryHref(e);
+    a.className='crit-btn'+(e.urgent?' urgent':'');
+    a.textContent=e.label;
+    grid.appendChild(a);
+  });
+  sec.appendChild(grid);
+  return sec;
+}
+
+function buildAccordion(sectionName,rows){
+  const acc=document.createElement('div');
+  acc.className='accordion';
+  acc.dataset.accordion='';
+  acc.innerHTML=
+    '<div class="accordion-header" onclick="toggleAccordion(this)">'+
+      '<span class="accordion-title">'+htmlEsc(SECTION_DISPLAY[sectionName]||sectionName)+'</span>'+
+      '<svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'+
+    '</div>'+
+    '<div class="accordion-body"><div class="accordion-body-inner"></div></div>';
+  const inner=acc.querySelector('.accordion-body-inner');
+  let currentSub=null;
+  rows.forEach(entry=>{
+    if(entry.subsection&&entry.subsection!==currentSub){
+      currentSub=entry.subsection;
+      const sh=document.createElement('div');
+      sh.className='sub-header';
+      sh.textContent=currentSub;
+      inner.appendChild(sh);
+      if(currentSub==='Regan'){
+        const note=document.createElement('div');
+        note.className='regan-note';
+        note.textContent='Rooms <50 = North wing · Rooms ≥50 = South wing';
+        inner.appendChild(note);
+      }
+    }
+    if(entry.label==='To Page (dial then pager #)'){
+      const row=document.createElement('div');
+      row.className='phone-row placeholder';
+      const lbl=document.createElement('span');
+      lbl.className='phone-label';
+      lbl.textContent=entry.label;
+      const ext=document.createElement('span');
+      ext.className='phone-number';
+      ext.textContent='Ext '+entry.type2;
+      row.appendChild(lbl);
+      row.appendChild(ext);
+      inner.appendChild(row);
+    } else {
+      inner.appendChild(createContactRow(entry));
+    }
+  });
+  return acc;
+}
+
+function buildDirectory(rows){
+  const container=document.getElementById('directory-content');
+  const sections={};
+  rows.forEach(r=>{
+    if(!sections[r.section]) sections[r.section]=[];
+    sections[r.section].push(r);
+  });
+  if(sections['Critical']) container.appendChild(buildCriticalSection(sections['Critical']));
+  Object.keys(SECTION_DISPLAY).slice(1).forEach(name=>{
+    if(sections[name]) container.appendChild(buildAccordion(name,sections[name]));
+  });
+  const nr=document.createElement('div');
+  nr.className='no-results';
+  nr.id='no-results';
+  nr.textContent='No contacts found';
+  container.appendChild(nr);
+}
+
+function filterContacts(){
+  const query=document.getElementById('searchInput').value.toLowerCase().trim();
+  const accordions=document.getElementById('directory-content').querySelectorAll('[data-accordion]');
+  let totalVisible=0;
+  accordions.forEach(acc=>{
+    const rows=acc.querySelectorAll('.phone-row:not(.placeholder),.crit-btn');
+    const subHeaders=acc.querySelectorAll('.sub-header');
+    let accVisible=0;
+    rows.forEach(row=>{
+      const label=((row.querySelector('.phone-label')||row).textContent+' '+(row.dataset.search||'')).toLowerCase();
+      const match=!query||label.includes(query);
+      row.classList.toggle('hidden',!match);
+      if(match) accVisible++;
+    });
+    subHeaders.forEach(sh=>{
+      let next=sh.nextElementSibling;
+      let anyVisible=false;
+      while(next&&!next.classList.contains('sub-header')){
+        if((next.classList.contains('phone-row')||next.classList.contains('crit-btn'))&&!next.classList.contains('hidden')){anyVisible=true;break;}
+        next=next.nextElementSibling;
+      }
+      sh.classList.toggle('hidden',!anyVisible);
+    });
+    acc.querySelectorAll('.regan-note').forEach(note=>{
+      const prev=note.previousElementSibling;
+      note.classList.toggle('hidden',prev&&prev.classList.contains('hidden'));
+    });
+    acc.classList.toggle('hidden',accVisible===0&&query.length>0);
+    if(query&&accVisible>0) acc.classList.add('open');
+    totalVisible+=accVisible;
+  });
+  const nr=document.getElementById('no-results');
+  if(nr) nr.classList.toggle('visible',totalVisible===0&&query.length>0);
+}
+
+async function loadContacts(){
+  try{
+    const res=await fetch('data/contacts.csv');
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    buildDirectory(parseCSV(await res.text()));
+  } catch(err){
+    document.getElementById('directory-content').innerHTML=
+      '<div style="text-align:center;padding:40px 20px;color:var(--text-dim)">Failed to load contacts. Please refresh.<br><small style="opacity:0.6">'+htmlEsc(String(err))+'</small></div>';
+  }
+}
+
+document.addEventListener('click',e=>{
+  const link=e.target.closest('a[href^="tel:"]');
+  if(link){e.preventDefault();e.stopPropagation();window.open(link.href,'_self');}
+},true);
+
+document.addEventListener('DOMContentLoaded',()=>{
+  loadContacts();
+  document.getElementById('directory-content').addEventListener('click',e=>{
+    if(e.target.closest('.phone-number,.detail-call-btn')) return;
+    const row=e.target.closest('.phone-row');
+    if(row&&!row.classList.contains('placeholder')) toggleExpand(row);
+  });
+});
 </script>
 </body>
 </html>

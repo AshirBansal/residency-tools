@@ -28,6 +28,14 @@ Need individual unit phone numbers to distinguish:
 
 ## Changelog
 
+### CSV-driven rebuild + St. Mike's removed
+- All contact data moved to `phone-directory/data/contacts.csv` — update numbers without touching code
+- St. Mike's panel and site selector removed; app opens directly to St. Joe's directory
+- New row UX: green **Call** button for direct dial; tap row label to expand detail panel showing all available number types (cell, in-hospital ext, external ext, pager) with individual call buttons
+- Critical grid unchanged — direct tap-to-call, no expansion
+- "To Page" row rendered as informational (non-tappable) placeholder
+- Number type semantics: type2 = in-hospital ext (4-digit from hospital phone); type3 = external-only ext (different 4-digit, must dial 973-754-XXXX); both can coexist on one row when the two extensions differ
+
 ### Pharmacy number corrected (St. Joe's)
 Extension corrected from 7525 → **3032**. Updated in both the critical grid and Services section.
 
