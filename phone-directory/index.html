@@ -111,8 +111,9 @@ body{
 .crit-btn:active{background:var(--surface-hover);box-shadow:none}
 .crit-btn.urgent{color:var(--danger);border-color:rgba(248,113,113,0.3);background:rgba(248,113,113,0.08)}
 .crit-btn.urgent:active{background:rgba(248,113,113,0.15)}
-.crit-main{display:block}
-.crit-sub{display:block;font-size:0.72rem;font-weight:500;opacity:0.7;margin-top:1px}
+.crit-label{display:flex;flex-direction:column;align-items:center;gap:2px}
+.crit-main{font-size:0.8rem;font-weight:600}
+.crit-sub{font-size:0.72rem;font-weight:500;opacity:0.65}
 /* ── Accordion ── */
 .accordion{margin-bottom:8px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);transition:border-color 0.25s,box-shadow 0.25s}
 .accordion.open{border-color:rgba(var(--accent-rgb),0.28);box-shadow:0 6px 28px rgba(0,0,0,0.5)}
@@ -177,7 +178,7 @@ const BASE='973754';
 const PAGING='9737545678';
 
 const PAGES=[
-  {id:'or',    label:'OR & Anes', emoji:'🏥',color:'#38bdf8',rgb:'56,189,248',  sections:['Main OR','SDS','Anes On-Call','PAT Office']},
+  {id:'or',    label:'OR & Anes', emoji:'🏥',color:'#38bdf8',rgb:'56,189,248',  sections:['Main OR','SDS','Anesthesia On-Call','PAT Office']},
   {id:'depts', label:'Depts',     emoji:'🩺',color:'#fb923c',rgb:'251,146,60',  sections:['Departments','On-Call Services']},
   {id:'floors',label:'Floors',    emoji:'🏢',color:'#34d399',rgb:'52,211,153',  sections:['Floors']},
   {id:'svcs',  label:'Services',  emoji:'🔧',color:'#a78bfa',rgb:'167,139,250', sections:['Services']},
@@ -185,7 +186,7 @@ const PAGES=[
 
 const SECTION_DISPLAY={
   'Main OR':'🏥 Main OR','SDS':'🏥 SDS',
-  'Anes On-Call':'🔔 Anes On-Call',
+  'Anesthesia On-Call':'🔔 Anesthesia On-Call',
   'PAT Office':'🩺 PAT Office',
   'Departments':'🏥 Departments',
   'On-Call Services':'📟 On-Call Services',
@@ -324,7 +325,7 @@ function buildQuickStrip(rows){
     a.className='crit-btn'+(e.urgent?' urgent':'');
     const parts=e.label.split('|');
     if(parts.length>1){
-      a.innerHTML='<span class="crit-main">'+htmlEsc(parts[0])+'</span><span class="crit-sub">'+htmlEsc(parts[1])+'</span>';
+      a.innerHTML='<span class="crit-label"><span class="crit-main">'+htmlEsc(parts[0])+'</span><span class="crit-sub">'+htmlEsc(parts[1])+'</span></span>';
     }else{
       a.textContent=e.label;
     }
