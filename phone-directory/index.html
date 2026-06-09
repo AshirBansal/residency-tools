@@ -15,7 +15,7 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
   --bg:#0f172a;--surface:#1e293b;--surface-hover:#273548;--border:#334155;
-  --text:#f1f5f9;--text-dim:#94a3b8;--phone-color:#4ade80;--danger:#f87171;--radius:12px;
+  --text:#f1f5f9;--text-dim:#94a3b8;--phone-color:#4ade80;--pager-color:#fb923c;--danger:#f87171;--radius:12px;
   --accent:#38bdf8;--accent-rgb:56,189,248
 }
 html,body{height:100%;overflow:hidden}
@@ -150,6 +150,8 @@ body{
 .detail-label{font-size:0.82rem;color:var(--text-dim);flex:1;padding-right:10px}
 .detail-call-btn{font-family:'JetBrains Mono',monospace;font-size:0.8rem;font-weight:600;color:var(--phone-color);background:rgba(74,222,128,0.10);padding:4px 10px;border-radius:6px;text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:5px}
 .detail-call-btn .call-icon{width:15px;height:15px;opacity:0.85;flex-shrink:0}
+.phone-number.pager{color:var(--pager-color);background:rgba(251,146,60,0.12)}
+.detail-call-btn.pager{color:var(--pager-color);background:rgba(251,146,60,0.12)}
 .no-results{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:0.95rem;display:none}
 .no-results.visible{display:block}
 .regan-note{font-size:0.72rem;color:var(--text-dim);padding:4px 14px 6px;font-style:italic}
@@ -232,7 +234,7 @@ function buildDetailLines(e){
   }else if(e.type3){
     lines.push({label:'Ext '+e.type3+' (external: 973-754-'+e.type3+')',href:'tel:'+BASE+e.type3});
   }
-  if(e.type4) lines.push({label:'Pager '+e.type4,href:'tel:'+PAGING});
+  if(e.type4) lines.push({label:'Pager '+e.type4,href:'tel:'+PAGING,isPager:true});
   return lines;
 }
 
@@ -242,15 +244,16 @@ function createContactRow(entry){
   div.className='phone-row'+(entry.urgent?' urgent':'');
   if(entry.search) div.dataset.search=entry.search;
   const detailLines=buildDetailLines(entry);
+  const isPagerPrimary=!entry.type1&&!entry.type2&&!entry.type3&&!!entry.type4;
   let detailHTML='';
   if(detailLines.length){
     detailHTML='<div class="phone-detail"><div class="phone-detail-inner">'+
       detailLines.map(l=>'<div class="detail-line"><span class="detail-label">'+htmlEsc(l.label)+
-        '</span><a href="'+l.href+'" class="detail-call-btn">'+CALL_SVG+'Call</a></div>').join('')+
+        '</span><a href="'+l.href+'" class="detail-call-btn'+(l.isPager?' pager':'')+'">'+CALL_SVG+(l.isPager?'Page':'Call')+'</a></div>').join('')+
       '</div></div>';
   }
   div.innerHTML='<span class="phone-label">'+htmlEsc(entry.label)+'</span>'+
-    '<a href="'+primaryHref(entry)+'" class="phone-number">'+CALL_SVG+'Call</a>'+detailHTML;
+    '<a href="'+primaryHref(entry)+'" class="phone-number'+(isPagerPrimary?' pager':'')+'">'+CALL_SVG+(isPagerPrimary?'Page':'Call')+'</a>'+detailHTML;
   return div;
 }
 
