@@ -129,6 +129,10 @@ body{
   border-top:1px solid rgba(var(--accent-rgb),0.15);
   background:linear-gradient(180deg,rgba(var(--accent-rgb),0.04) 0,transparent 28px),#080e1a
 }
+.flat-list{
+  margin-bottom:8px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);
+  background:linear-gradient(180deg,rgba(var(--accent-rgb),0.04) 0,transparent 28px),#080e1a
+}
 .sub-header{padding:8px 14px 4px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.04)}
 .sub-header:first-child{border-top:none}
 /* ── Phone rows ── */
@@ -193,6 +197,10 @@ const SECTION_DISPLAY={
   'Departments':'🏥 Departments',
   'On-Call Services':'📟 On-Call Services',
   'Floors':'🏢 Floors','Services':'🔧 Services'
+};
+const SECTION_MODE={
+  'Floors':'split',
+  'Services':'flat'
 };
 
 let allRows=[];
@@ -259,7 +267,7 @@ function createContactRow(entry){
 
 function toggleExpand(rowEl){
   const wasOpen=rowEl.classList.contains('open');
-  const container=rowEl.closest('.accordion-body-inner,.search-card');
+  const container=rowEl.closest('.accordion-body-inner,.search-card,.flat-list');
   if(container) container.querySelectorAll('.phone-row.open').forEach(r=>r.classList.remove('open'));
   if(!wasOpen) rowEl.classList.add('open');
 }
@@ -267,39 +275,82 @@ function toggleExpand(rowEl){
 function toggleAccordion(header){header.parentElement.classList.toggle('open')}
 
 // ─── Section builders ────────────────────────────────────────────────────────
-function buildAccordion(sectionName,rows){
-  const acc=document.createElement('div');
-  acc.className='accordion';
-  acc.dataset.accordion='';
-  acc.innerHTML=
-    '<div class="accordion-header" onclick="toggleAccordion(this)">'+
-      '<span class="accordion-title">'+htmlEsc(SECTION_DISPLAY[sectionName]||sectionName)+'</span>'+
-      '<svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'+
-    '</div>'+
-    '<div class="accordion-body"><div class="accordion-body-inner"></div></div>';
-  const inner=acc.querySelector('.accordion-body-inner');
+function buildRowsInto(container,rows,opts){
+  opts=opts||{};
+  if(opts.note){
+    const note=document.createElement('div');note.className='regan-note';
+    note.textContent=opts.note;
+    container.appendChild(note);
+  }
   let currentSub=null;
   rows.forEach(entry=>{
-    if(entry.subsection&&entry.subsection!==currentSub){
+    if(opts.showSubHeaders&&entry.subsection&&entry.subsection!==currentSub){
       currentSub=entry.subsection;
       const sh=document.createElement('div');sh.className='sub-header';sh.textContent=currentSub;
-      inner.appendChild(sh);
+      container.appendChild(sh);
       if(currentSub==='Regan'){
         const note=document.createElement('div');note.className='regan-note';
         note.textContent='Rooms <50 = North wing · Rooms ≥50 = South wing';
-        inner.appendChild(note);
+        container.appendChild(note);
       }
     }
     if(entry.label==='To Page (dial then pager #)'){
       const row=document.createElement('div');row.className='phone-row placeholder';
       const lbl=document.createElement('span');lbl.className='phone-label';lbl.textContent=entry.label;
       const ext=document.createElement('span');ext.className='phone-number';ext.textContent='Ext '+entry.type2;
-      row.appendChild(lbl);row.appendChild(ext);inner.appendChild(row);
+      row.appendChild(lbl);row.appendChild(ext);container.appendChild(row);
     }else{
-      inner.appendChild(createContactRow(entry));
+      container.appendChild(createContactRow(entry));
     }
   });
+}
+
+function buildAccordionShell(title){
+  const acc=document.createElement('div');
+  acc.className='accordion';
+  acc.dataset.accordion='';
+  acc.innerHTML=
+    '<div class="accordion-header" onclick="toggleAccordion(this)">'+
+      '<span class="accordion-title">'+htmlEsc(title)+'</span>'+
+      '<svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'+
+    '</div>'+
+    '<div class="accordion-body"><div class="accordion-body-inner"></div></div>';
   return acc;
+}
+
+function buildAccordion(sectionName,rows){
+  const acc=buildAccordionShell(SECTION_DISPLAY[sectionName]||sectionName);
+  buildRowsInto(acc.querySelector('.accordion-body-inner'),rows,{showSubHeaders:true});
+  return acc;
+}
+
+function buildSplitAccordions(sectionName,rows){
+  const frag=document.createDocumentFragment();
+  const emojiMatch=(SECTION_DISPLAY[sectionName]||'').match(/^(\S+)/);
+  const emoji=emojiMatch?emojiMatch[1]+' ':'';
+  const groups={};
+  const order=[];
+  rows.forEach(r=>{
+    const sub=r.subsection||sectionName;
+    if(!order.includes(sub)){order.push(sub);groups[sub]=[];}
+    groups[sub].push(r);
+  });
+  order.forEach(sub=>{
+    const acc=buildAccordionShell(emoji+sub);
+    const opts={showSubHeaders:false};
+    if(sub==='Regan') opts.note='Rooms <50 = North wing · Rooms ≥50 = South wing';
+    buildRowsInto(acc.querySelector('.accordion-body-inner'),groups[sub],opts);
+    frag.appendChild(acc);
+  });
+  return frag;
+}
+
+function buildFlatList(rows){
+  const list=document.createElement('div');
+  list.className='flat-list';
+  list.dataset.accordion='';
+  buildRowsInto(list,rows,{showSubHeaders:false});
+  return list;
 }
 
 function buildPage(cfg,sectionMap){
@@ -309,7 +360,11 @@ function buildPage(cfg,sectionMap){
   page.style.setProperty('--accent',cfg.color);
   page.style.setProperty('--accent-rgb',cfg.rgb);
   cfg.sections.forEach(name=>{
-    if(sectionMap[name]) page.appendChild(buildAccordion(name,sectionMap[name]));
+    if(!sectionMap[name]) return;
+    const mode=SECTION_MODE[name];
+    if(mode==='split') page.appendChild(buildSplitAccordions(name,sectionMap[name]));
+    else if(mode==='flat') page.appendChild(buildFlatList(sectionMap[name]));
+    else page.appendChild(buildAccordion(name,sectionMap[name]));
   });
   if(cfg.id==='svcs'){
     const fb=document.createElement('div');
