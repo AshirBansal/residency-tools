@@ -162,6 +162,8 @@ body{
 .phone-number .call-icon{width:18px;height:18px;opacity:0.85;flex-shrink:0}
 .phone-row.urgent .phone-label{color:var(--danger);font-weight:700}
 .phone-row.urgent .phone-number{color:var(--danger);background:rgba(248,113,113,0.10)}
+.info-icon{font-size:1.05rem;color:var(--text-dim);opacity:0.45;flex-shrink:0;margin-left:8px;transition:opacity 0.2s}
+.phone-row.open .info-icon{opacity:0.7}
 .phone-row.placeholder{pointer-events:none;cursor:default}
 .phone-row.placeholder .phone-number{color:var(--text-dim);font-style:italic;font-weight:400;background:transparent;border:1px dashed var(--border)}
 .phone-detail{width:100%;display:grid;grid-template-rows:0fr;transition:grid-template-rows 0.25s cubic-bezier(0.4,0,0.2,1)}
@@ -282,7 +284,8 @@ function createContactRow(entry){
       '</div></div>';
   }
   div.innerHTML='<span class="phone-label">'+htmlEsc(entry.label)+'</span>'+
-    '<a href="'+primaryHref(entry)+'" class="phone-number'+(isPagerPrimary?' pager':'')+'">'+CALL_SVG+(isPagerPrimary?'Page':'Call')+'</a>'+detailHTML;
+    '<a href="'+primaryHref(entry)+'" class="phone-number'+(isPagerPrimary?' pager':'')+'">'+CALL_SVG+(isPagerPrimary?'Page':'Call')+'</a>'+
+    (detailLines.length?'<span class="info-icon">ⓘ</span>':'')+detailHTML;
   return div;
 }
 
