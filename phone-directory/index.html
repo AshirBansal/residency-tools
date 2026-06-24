@@ -463,7 +463,13 @@ function showSwipeHint(){
 }
 
 // ─── Navigation ──────────────────────────────────────────────────────────────
+function dismissSearch(){
+  const input=document.getElementById('searchInput');
+  if(input.value){input.value='';input.blur();document.getElementById('searchClear').classList.remove('visible');document.getElementById('search-overlay').classList.remove('visible');}
+}
+
 function goToPage(idx){
+  dismissSearch();
   const scroll=document.getElementById('pages-scroll');
   scroll.scrollTo({left:idx*scroll.offsetWidth,behavior:'smooth'});
   updateActiveTab(idx);
@@ -481,6 +487,7 @@ function updateActiveTab(idx){
 
 function initPageObserver(){
   const scroll=document.getElementById('pages-scroll');
+  scroll.addEventListener('scroll',()=>dismissSearch(),{passive:true});
   const obs=new IntersectionObserver(entries=>{
     entries.forEach(e=>{
       if(e.isIntersecting&&e.intersectionRatio>=0.5) updateActiveTab(+e.target.dataset.pageIdx);
@@ -530,8 +537,9 @@ function filterContacts(){
 function clearSearch(){
   const input=document.getElementById('searchInput');
   input.value='';
-  filterContacts();
-  input.focus();
+  input.blur();
+  document.getElementById('searchClear').classList.remove('visible');
+  document.getElementById('search-overlay').classList.remove('visible');
 }
 
 // ─── Bootstrap ───────────────────────────────────────────────────────────────
