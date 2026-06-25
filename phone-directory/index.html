@@ -230,6 +230,8 @@ const SECTION_MODE={
 
 let allRows=[];
 let currentPageIdx=0;
+let programmaticScroll=false;
+let scrollSettleTimer=null;
 
 // ─── Utilities ───────────────────────────────────────────────────────────────
 function htmlEsc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
@@ -487,6 +489,7 @@ function clearSearch(){
 function goToPage(idx){
   clearSearch();
   const scroll=document.getElementById('pages-scroll');
+  if(idx!==currentPageIdx) programmaticScroll=true;
   scroll.scrollTo({left:idx*scroll.offsetWidth,behavior:'smooth'});
   updateActiveTab(idx);
 }
@@ -503,10 +506,14 @@ function updateActiveTab(idx){
 
 function initPageObserver(){
   const scroll=document.getElementById('pages-scroll');
-  scroll.addEventListener('scroll',clearSearch,{passive:true});
+  scroll.addEventListener('scroll',()=>{
+    clearSearch();
+    clearTimeout(scrollSettleTimer);
+    scrollSettleTimer=setTimeout(()=>{programmaticScroll=false;},120);
+  },{passive:true});
   const obs=new IntersectionObserver(entries=>{
     entries.forEach(e=>{
-      if(e.isIntersecting&&e.intersectionRatio>=0.5) updateActiveTab(+e.target.dataset.pageIdx);
+      if(e.isIntersecting&&e.intersectionRatio>=0.5&&!programmaticScroll) updateActiveTab(+e.target.dataset.pageIdx);
     });
   },{root:scroll,threshold:0.5});
   scroll.querySelectorAll('.page').forEach(p=>obs.observe(p));
