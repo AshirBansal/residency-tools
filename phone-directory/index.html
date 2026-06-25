@@ -27,7 +27,8 @@ body{
 .header{
   flex-shrink:0;z-index:100;
   background:rgba(15,23,42,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);padding:14px 16px 11px
+  border-bottom:1px solid var(--border);padding:14px 16px 11px;
+  padding-top:calc(env(safe-area-inset-top,0px) + 14px)
 }
 .header h1{font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:10px;text-align:center}
 .search-wrap{position:relative}
