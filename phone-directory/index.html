@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="mobile-web-app-capable" content="yes">
@@ -32,7 +32,7 @@ body{
 .header h1{font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:10px;text-align:center}
 .search-wrap{position:relative}
 .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);pointer-events:none}
-.search-input{width:100%;padding:9px 34px 9px 38px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:0.93rem;outline:none;transition:border-color 0.2s}
+.search-input{width:100%;padding:9px 34px 9px 38px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:1rem;outline:none;transition:border-color 0.2s}
 .search-input::placeholder{color:var(--text-dim);opacity:0.6}
 .search-input:focus{border-color:var(--accent)}
 .search-clear{
@@ -141,14 +141,15 @@ body{
 .accordion.open .accordion-chevron{transform:rotate(180deg)}
 .accordion-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows 0.35s cubic-bezier(0.4,0,0.2,1)}
 .accordion.open .accordion-body{grid-template-rows:1fr}
-.accordion-body-inner{
-  min-height:0;overflow:hidden;
-  border-top:1px solid rgba(var(--accent-rgb),0.15);
+.accordion-body-inner,.flat-list{
   background:linear-gradient(180deg,rgba(var(--accent-rgb),0.04) 0,transparent 28px),#080e1a
 }
+.accordion-body-inner{
+  min-height:0;overflow:hidden;
+  border-top:1px solid rgba(var(--accent-rgb),0.15)
+}
 .flat-list{
-  margin-bottom:8px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);
-  background:linear-gradient(180deg,rgba(var(--accent-rgb),0.04) 0,transparent 28px),#080e1a
+  margin-bottom:8px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)
 }
 .sub-header{padding:8px 14px 4px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.04)}
 .sub-header:first-child{border-top:none}
@@ -175,10 +176,10 @@ body{
 .detail-call-btn .call-icon{width:15px;height:15px;opacity:0.85;flex-shrink:0}
 .phone-number.pager{color:var(--pager-color);background:rgba(251,146,60,0.12)}
 .detail-call-btn.pager{color:var(--pager-color);background:rgba(251,146,60,0.12)}
-.no-results{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:0.95rem;display:none}
-.no-results.visible{display:block}
+.no-results{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:0.95rem}
+.feedback-link{text-align:center;padding:20px 16px 4px}
+.feedback-link a{color:var(--text-dim);font-size:0.82rem;text-decoration:none;opacity:0.7}
 .regan-note{font-size:0.72rem;color:var(--text-dim);padding:4px 14px 6px;font-style:italic}
-.hidden{display:none!important}
 @media(min-width:600px){body{max-width:540px;margin:0 auto}}
 </style>
 </head>
@@ -203,6 +204,8 @@ body{
 const CALL_SVG='<svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>';
 const BASE='973754';
 const PAGING='9737545678';
+const PAGE_HELPER_LABEL='To Page (dial then pager #)';
+const REGAN_NOTE='Rooms <50 = North wing · Rooms ≥50 = South wing';
 
 const PAGES=[
   {id:'or',    label:'OR & Anes', emoji:'🏥',color:'#38bdf8',rgb:'56,189,248',  sections:['Main OR','SDS','PAT Office']},
@@ -233,14 +236,28 @@ function htmlEsc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(
 
 function parseCSV(text){
   const lines=text.trim().split('\n');
-  const headers=lines[0].split(',').map(h=>h.trim());
+  const headers=splitCSVLine(lines[0]).map(h=>h.trim());
   return lines.slice(1).map(line=>{
-    const vals=line.split(',');
+    const vals=splitCSVLine(line);
     const obj={};
     headers.forEach((h,i)=>{obj[h]=(vals[i]||'').trim();});
     obj.urgent=obj.urgent==='true';
     return obj;
   });
+}
+
+function splitCSVLine(line){
+  const out=[];let cur='',inQuote=false;
+  for(let i=0;i<line.length;i++){
+    const c=line[i];
+    if(c==='"'){
+      if(inQuote&&line[i+1]==='"'){cur+='"';i++;}
+      else inQuote=!inQuote;
+    }else if(c===','&&!inQuote){out.push(cur);cur='';}
+    else cur+=c;
+  }
+  out.push(cur);
+  return out;
 }
 
 function primaryHref(e){
@@ -272,7 +289,6 @@ function buildDetailLines(e){
 function createContactRow(entry){
   const div=document.createElement('div');
   div.className='phone-row'+(entry.urgent?' urgent':'');
-  if(entry.search) div.dataset.search=entry.search;
   const detailLines=buildDetailLines(entry);
   const isPagerPrimary=!entry.type1&&!entry.type2&&!entry.type3&&!!entry.type4;
   let detailHTML='';
@@ -311,13 +327,8 @@ function buildRowsInto(container,rows,opts){
       currentSub=entry.subsection;
       const sh=document.createElement('div');sh.className='sub-header';sh.textContent=currentSub;
       container.appendChild(sh);
-      if(currentSub==='Regan'){
-        const note=document.createElement('div');note.className='regan-note';
-        note.textContent='Rooms <50 = North wing · Rooms ≥50 = South wing';
-        container.appendChild(note);
-      }
     }
-    if(entry.label==='To Page (dial then pager #)'){
+    if(entry.label===PAGE_HELPER_LABEL){
       const row=document.createElement('div');row.className='phone-row placeholder';
       const lbl=document.createElement('span');lbl.className='phone-label';lbl.textContent=entry.label;
       const ext=document.createElement('span');ext.className='phone-number';ext.textContent='Ext '+entry.type2;
@@ -331,7 +342,6 @@ function buildRowsInto(container,rows,opts){
 function buildAccordionShell(title){
   const acc=document.createElement('div');
   acc.className='accordion';
-  acc.dataset.accordion='';
   acc.innerHTML=
     '<div class="accordion-header" onclick="toggleAccordion(this)">'+
       '<span class="accordion-title">'+htmlEsc(title)+'</span>'+
@@ -361,7 +371,7 @@ function buildSplitAccordions(sectionName,rows){
   order.forEach(sub=>{
     const acc=buildAccordionShell(emoji+sub);
     const opts={showSubHeaders:false};
-    if(sub==='Regan') opts.note='Rooms <50 = North wing · Rooms ≥50 = South wing';
+    if(sub==='Regan') opts.note=REGAN_NOTE;
     buildRowsInto(acc.querySelector('.accordion-body-inner'),groups[sub],opts);
     frag.appendChild(acc);
   });
@@ -371,7 +381,6 @@ function buildSplitAccordions(sectionName,rows){
 function buildFlatList(rows){
   const list=document.createElement('div');
   list.className='flat-list';
-  list.dataset.accordion='';
   buildRowsInto(list,rows,{showSubHeaders:false});
   return list;
 }
@@ -389,13 +398,14 @@ function buildPage(cfg,sectionMap){
     else if(mode==='flat') page.appendChild(buildFlatList(sectionMap[name]));
     else page.appendChild(buildAccordion(name,sectionMap[name]));
   });
-  if(cfg.id==='svcs'){
-    const fb=document.createElement('div');
-    fb.style.cssText='text-align:center;padding:20px 16px 4px';
-    fb.innerHTML='<a href="https://forms.gle/PFFs27XwmE9R3WnBA" target="_blank" rel="noopener" style="color:var(--text-dim);font-size:0.82rem;text-decoration:none;opacity:0.7">💬 Have feedback? Let us know</a>';
-    page.appendChild(fb);
-  }
   return page;
+}
+
+function appendFeedbackLink(page){
+  const fb=document.createElement('div');
+  fb.className='feedback-link';
+  fb.innerHTML='<a href="https://forms.gle/PFFs27XwmE9R3WnBA" target="_blank" rel="noopener">💬 Have feedback? Let us know</a>';
+  page.appendChild(fb);
 }
 
 function buildQuickStrip(rows){
@@ -422,7 +432,6 @@ function buildTabBar(){
     const btn=document.createElement('button');
     btn.className='tab-btn'+(idx===0?' active':'');
     btn.style.setProperty('--tab-color',cfg.color);
-    btn.dataset.idx=idx;
     btn.innerHTML='<span class="tab-emoji">'+cfg.emoji+'</span><span>'+cfg.label+'</span>';
     btn.addEventListener('click',()=>goToPage(idx));
     bar.appendChild(btn);
@@ -441,7 +450,11 @@ function buildDirectory(rows){
   rows.forEach(r=>{if(!sectionMap[r.section])sectionMap[r.section]=[];sectionMap[r.section].push(r);});
   if(sectionMap['Critical']) buildQuickStrip(sectionMap['Critical']);
   const scroll=document.getElementById('pages-scroll');
-  PAGES.forEach(cfg=>scroll.appendChild(buildPage(cfg,sectionMap)));
+  PAGES.forEach(cfg=>{
+    const page=buildPage(cfg,sectionMap);
+    if(cfg.id==='svcs') appendFeedbackLink(page);
+    scroll.appendChild(page);
+  });
   buildTabBar();
   initPageObserver();
   showSwipeHint();
@@ -462,13 +475,17 @@ function showSwipeHint(){
 }
 
 // ─── Navigation ──────────────────────────────────────────────────────────────
-function dismissSearch(){
+function clearSearch(){
   const input=document.getElementById('searchInput');
-  if(input.value){input.value='';input.blur();document.getElementById('searchClear').classList.remove('visible');document.getElementById('search-overlay').classList.remove('visible');}
+  if(!input.value) return;
+  input.value='';
+  input.blur();
+  document.getElementById('searchClear').classList.remove('visible');
+  document.getElementById('search-overlay').classList.remove('visible');
 }
 
 function goToPage(idx){
-  dismissSearch();
+  clearSearch();
   const scroll=document.getElementById('pages-scroll');
   scroll.scrollTo({left:idx*scroll.offsetWidth,behavior:'smooth'});
   updateActiveTab(idx);
@@ -486,7 +503,7 @@ function updateActiveTab(idx){
 
 function initPageObserver(){
   const scroll=document.getElementById('pages-scroll');
-  scroll.addEventListener('scroll',()=>dismissSearch(),{passive:true});
+  scroll.addEventListener('scroll',clearSearch,{passive:true});
   const obs=new IntersectionObserver(entries=>{
     entries.forEach(e=>{
       if(e.isIntersecting&&e.intersectionRatio>=0.5) updateActiveTab(+e.target.dataset.pageIdx);
@@ -507,7 +524,7 @@ function filterContacts(){
   let groupIdx=0;
   PAGES.forEach(cfg=>{
     const hits=allRows.filter(r=>{
-      if(!cfg.sections.includes(r.section)||r.label==='To Page (dial then pager #)') return false;
+      if(!cfg.sections.includes(r.section)||r.label===PAGE_HELPER_LABEL) return false;
       return(r.label+' '+(r.search||'')).toLowerCase().includes(query);
     });
     if(!hits.length) return;
@@ -531,14 +548,6 @@ function filterContacts(){
     const nr=document.createElement('div');nr.className='no-results visible';
     nr.textContent='No contacts found';overlay.appendChild(nr);
   }
-}
-
-function clearSearch(){
-  const input=document.getElementById('searchInput');
-  input.value='';
-  input.blur();
-  document.getElementById('searchClear').classList.remove('visible');
-  document.getElementById('search-overlay').classList.remove('visible');
 }
 
 // ─── Bootstrap ───────────────────────────────────────────────────────────────
@@ -569,6 +578,12 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(row&&!row.classList.contains('placeholder')) toggleExpand(row);
   });
 });
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(err=>console.warn('SW register failed:',err));
+  });
+}
 </script>
 </body>
 </html>
