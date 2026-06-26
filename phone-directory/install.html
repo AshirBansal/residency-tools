@@ -51,15 +51,15 @@ h1{font-size:1.4rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
   transition:background 0.15s,color 0.15s
 }
 .platform-toggle button.active{background:rgba(var(--accent-rgb),0.18);color:var(--accent)}
-.open-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  width:100%;max-width:320px;padding:14px 24px;
-  background:var(--accent);color:#0f172a;
-  font-family:inherit;font-size:1rem;font-weight:700;
-  border:none;border-radius:var(--radius);cursor:pointer;
-  transition:opacity 0.15s;text-decoration:none
+.install-note{font-size:0.88rem;color:var(--text-dim);margin-bottom:20px;line-height:1.5}
+.install-note strong{color:var(--text)}
+.browser-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);padding:10px 14px 0}
+.browse-link{
+  display:inline-block;margin-top:20px;
+  color:var(--text-dim);font-size:0.8rem;text-decoration:none;opacity:0.6;
+  transition:opacity 0.15s
 }
-.open-btn:active{opacity:0.8}
+.browse-link:active{opacity:1}
 .install-btn{
   display:none;align-items:center;justify-content:center;gap:8px;
   width:100%;max-width:320px;padding:14px 24px;margin-bottom:12px;
@@ -85,10 +85,20 @@ h1{font-size:1.4rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
     <button id="btnAndroid" onclick="showPlatform('android')">Android</button>
   </div>
 
-  <div class="steps" id="stepsIos" style="display:none">
-    <div class="step"><span class="step-num">1</span><div class="step-text">Tap the <strong>Share</strong> button <strong>⬆</strong> at the bottom of Safari</div></div>
-    <div class="step"><span class="step-num">2</span><div class="step-text">Scroll down and tap <strong>"Add to Home Screen"</strong></div></div>
-    <div class="step"><span class="step-num">3</span><div class="step-text">Tap <strong>"Add"</strong> in the top right</div></div>
+  <div id="stepsIos" style="display:none">
+    <div class="steps" id="stepsIosSafari">
+      <div class="browser-label">In Safari</div>
+      <div class="step"><span class="step-num">1</span><div class="step-text">Tap the <strong>Share</strong> button <strong>⬆</strong> in the toolbar</div></div>
+      <div class="step"><span class="step-num">2</span><div class="step-text">Scroll down — you may need to tap <strong>"Edit Actions…"</strong> or the <strong>arrow ›</strong> to see more options</div></div>
+      <div class="step"><span class="step-num">3</span><div class="step-text">Tap <strong>"Add to Home Screen"</strong></div></div>
+      <div class="step"><span class="step-num">4</span><div class="step-text">Tap <strong>"Add"</strong> in the top right</div></div>
+    </div>
+    <div class="steps" id="stepsIosChrome" style="margin-top:12px">
+      <div class="browser-label">In Chrome</div>
+      <div class="step"><span class="step-num">1</span><div class="step-text">Tap the <strong>Share</strong> button <strong>⬆</strong> in the address bar</div></div>
+      <div class="step"><span class="step-num">2</span><div class="step-text">Tap <strong>"Add to Home Screen"</strong></div></div>
+      <div class="step"><span class="step-num">3</span><div class="step-text">Tap <strong>"Add"</strong> to confirm</div></div>
+    </div>
   </div>
 
   <div class="steps" id="stepsAndroid" style="display:none">
@@ -97,11 +107,13 @@ h1{font-size:1.4rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
     <div class="step"><span class="step-num">3</span><div class="step-text">Tap <strong>"Install"</strong> to confirm</div></div>
   </div>
 
+  <p class="install-note">Follow the steps above to install — <strong>you're already on the right page</strong></p>
+
   <button class="install-btn" id="installBtn" onclick="doInstall()">⬇ Install App</button>
   <div class="or-divider" id="orDivider">or follow the steps above</div>
 
-  <a class="open-btn" href="index.html">Open Directory →</a>
   <p class="hint">Once installed, the app works offline too</p>
+  <a class="browse-link" href="index.html">Just want to browse without installing? →</a>
 </div>
 
 <script>
