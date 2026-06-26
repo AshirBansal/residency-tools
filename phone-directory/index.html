@@ -406,7 +406,7 @@ function buildPage(cfg,sectionMap){
 function appendFeedbackLink(page){
   const fb=document.createElement('div');
   fb.className='feedback-link';
-  fb.innerHTML='<a href="https://forms.gle/PFFs27XwmE9R3WnBA" target="_blank" rel="noopener">💬 Have feedback? Let us know</a>';
+  fb.innerHTML='<a href="https://forms.gle/PFFs27XwmE9R3WnBA" target="_blank" rel="noopener">📋 Report missing or incorrect numbers</a>';
   page.appendChild(fb);
 }
 
@@ -454,7 +454,7 @@ function buildDirectory(rows){
   const scroll=document.getElementById('pages-scroll');
   PAGES.forEach(cfg=>{
     const page=buildPage(cfg,sectionMap);
-    if(cfg.id==='svcs') appendFeedbackLink(page);
+    appendFeedbackLink(page);
     scroll.appendChild(page);
   });
   buildTabBar();
