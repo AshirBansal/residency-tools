@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Install St. Joseph's Directory</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0f172a;--surface:#1e293b;--border:#334155;
+  --text:#f1f5f9;--text-dim:#94a3b8;--accent:#38bdf8;--accent-rgb:56,189,248;--radius:12px
+}
+html,body{height:100%}
+body{
+  font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px 20px;-webkit-font-smoothing:antialiased;min-height:100dvh
+}
+.card{
+  width:100%;max-width:400px;text-align:center;
+  animation:fadeUp 0.4s cubic-bezier(0.4,0,0.2,1)
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.app-icon{width:88px;height:88px;border-radius:22px;margin:0 auto 16px;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+h1{font-size:1.4rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
+.subtitle{color:var(--text-dim);font-size:0.9rem;margin-bottom:28px}
+.steps{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  text-align:left;overflow:hidden;margin-bottom:24px
+}
+.step{display:flex;gap:14px;padding:16px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.step:last-child{border-bottom:none}
+.step-num{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  background:rgba(var(--accent-rgb),0.15);color:var(--accent);
+  font-weight:700;font-size:0.85rem;
+  display:flex;align-items:center;justify-content:center
+}
+.step-text{font-size:0.92rem;line-height:1.5;padding-top:2px}
+.step-text strong{color:var(--accent);font-weight:700}
+.platform-toggle{
+  display:inline-flex;gap:0;border:1px solid var(--border);border-radius:8px;
+  overflow:hidden;margin-bottom:20px;font-size:0.82rem
+}
+.platform-toggle button{
+  padding:7px 16px;border:none;background:transparent;color:var(--text-dim);
+  font-family:inherit;font-size:inherit;font-weight:600;cursor:pointer;
+  transition:background 0.15s,color 0.15s
+}
+.platform-toggle button.active{background:rgba(var(--accent-rgb),0.18);color:var(--accent)}
+.open-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;max-width:320px;padding:14px 24px;
+  background:var(--accent);color:#0f172a;
+  font-family:inherit;font-size:1rem;font-weight:700;
+  border:none;border-radius:var(--radius);cursor:pointer;
+  transition:opacity 0.15s;text-decoration:none
+}
+.open-btn:active{opacity:0.8}
+.install-btn{
+  display:none;align-items:center;justify-content:center;gap:8px;
+  width:100%;max-width:320px;padding:14px 24px;margin-bottom:12px;
+  background:#4ade80;color:#0f172a;
+  font-family:inherit;font-size:1rem;font-weight:700;
+  border:none;border-radius:var(--radius);cursor:pointer;
+  transition:opacity 0.15s
+}
+.install-btn:active{opacity:0.8}
+.or-divider{color:var(--text-dim);font-size:0.82rem;margin-bottom:12px;display:none}
+.hint{color:var(--text-dim);font-size:0.78rem;margin-top:16px;opacity:0.7}
+@media(min-width:600px){body{max-width:540px;margin:0 auto}}
+</style>
+</head>
+<body>
+<div class="card">
+  <img class="app-icon" src="icon-192.png" alt="App icon">
+  <h1>St. Joseph's Directory</h1>
+  <p class="subtitle">Add to your home screen for quick access</p>
+
+  <div class="platform-toggle" id="platformToggle">
+    <button id="btnIos" onclick="showPlatform('ios')">iPhone</button>
+    <button id="btnAndroid" onclick="showPlatform('android')">Android</button>
+  </div>
+
+  <div class="steps" id="stepsIos" style="display:none">
+    <div class="step"><span class="step-num">1</span><div class="step-text">Tap the <strong>Share</strong> button <strong>⬆</strong> at the bottom of Safari</div></div>
+    <div class="step"><span class="step-num">2</span><div class="step-text">Scroll down and tap <strong>"Add to Home Screen"</strong></div></div>
+    <div class="step"><span class="step-num">3</span><div class="step-text">Tap <strong>"Add"</strong> in the top right</div></div>
+  </div>
+
+  <div class="steps" id="stepsAndroid" style="display:none">
+    <div class="step"><span class="step-num">1</span><div class="step-text">Tap the <strong>⋮ menu</strong> in the top right of Chrome</div></div>
+    <div class="step"><span class="step-num">2</span><div class="step-text">Tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></div></div>
+    <div class="step"><span class="step-num">3</span><div class="step-text">Tap <strong>"Install"</strong> to confirm</div></div>
+  </div>
+
+  <button class="install-btn" id="installBtn" onclick="doInstall()">⬇ Install App</button>
+  <div class="or-divider" id="orDivider">or follow the steps above</div>
+
+  <a class="open-btn" href="index.html">Open Directory →</a>
+  <p class="hint">Once installed, the app works offline too</p>
+</div>
+
+<script>
+const isStandalone=window.matchMedia('(display-mode:standalone)').matches||window.navigator.standalone;
+if(isStandalone) window.location.replace('index.html');
+
+const isIos=/iPhone|iPad|iPod/.test(navigator.userAgent);
+
+function showPlatform(p){
+  document.getElementById('stepsIos').style.display=p==='ios'?'':'none';
+  document.getElementById('stepsAndroid').style.display=p==='android'?'':'none';
+  document.getElementById('btnIos').classList.toggle('active',p==='ios');
+  document.getElementById('btnAndroid').classList.toggle('active',p==='android');
+}
+showPlatform(isIos?'ios':'android');
+
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  document.getElementById('installBtn').style.display='inline-flex';
+  document.getElementById('orDivider').style.display='';
+});
+
+function doInstall(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(r=>{
+    if(r.outcome==='accepted') window.location.replace('index.html');
+    deferredPrompt=null;
+  });
+}
+</script>
+</body>
+</html>

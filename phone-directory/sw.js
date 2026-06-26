@@ -1,5 +1,5 @@
-const VERSION='v1';
-const ASSETS=['./','index.html','data/contacts.csv','manifest.json','icon-192.png','icon-512.png'];
+const VERSION='v2';
+const ASSETS=['./','index.html','install.html','data/contacts.csv','manifest.json','icon-192.png','icon-512.png'];
 
 self.addEventListener('install',e=>{
   e.waitUntil(
