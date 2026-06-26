@@ -55,7 +55,7 @@ h1{font-size:1.4rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
 .platform-toggle button.active{background:rgba(var(--accent-rgb),0.18);color:var(--accent)}
 .install-note{font-size:0.88rem;color:var(--text-dim);margin-bottom:20px;line-height:1.5}
 .install-note strong{color:var(--text)}
-.browser-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);padding:10px 14px 0}
+.branch{display:block;font-size:0.84rem;color:var(--text-dim);margin-top:6px;padding-left:2px}
 .browse-link{
   display:inline-block;margin-top:20px;
   color:var(--text-dim);font-size:0.8rem;text-decoration:none;opacity:0.6;
@@ -88,21 +88,11 @@ h1{font-size:1.4rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
     <button id="btnAndroid" onclick="showPlatform('android')">Android</button>
   </div>
 
-  <div id="stepsIos" style="display:none">
-    <div class="steps" id="stepsIosSafari">
-      <div class="browser-label">In Safari</div>
-      <div class="step"><span class="step-num">1</span><div class="step-text">Tap the <strong>⋯</strong> button at the bottom right of the toolbar</div></div>
-      <div class="step"><span class="step-num">2</span><div class="step-text">Tap <strong>"Share"</strong> <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> from the menu</div></div>
-      <div class="step"><span class="step-num">3</span><div class="step-text">Tap <strong>"View More"</strong> at the bottom of the share sheet</div></div>
-      <div class="step"><span class="step-num">4</span><div class="step-text">Tap <strong>"Add to Home Screen"</strong></div></div>
-      <div class="step"><span class="step-num">5</span><div class="step-text">Tap <strong>"Add"</strong> in the top right</div></div>
-    </div>
-    <div class="steps" id="stepsIosChrome" style="margin-top:12px">
-      <div class="browser-label">In Chrome</div>
-      <div class="step"><span class="step-num">1</span><div class="step-text">Tap the <strong>Share</strong> button <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> in the address bar</div></div>
-      <div class="step"><span class="step-num">2</span><div class="step-text">Tap <strong>"Add to Home Screen"</strong></div></div>
-      <div class="step"><span class="step-num">3</span><div class="step-text">Tap <strong>"Add"</strong> to confirm</div></div>
-    </div>
+  <div class="steps" id="stepsIos" style="display:none">
+    <div class="step"><span class="step-num">1</span><div class="step-text">Open the <strong>Share</strong> <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> menu:<br><span class="branch">Safari — tap <strong>⋯</strong> at the bottom right, then <strong>"Share"</strong></span><br><span class="branch">Chrome / Firefox — tap <strong>Share</strong> <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> in the address bar</span></div></div>
+    <div class="step"><span class="step-num">2</span><div class="step-text">Tap <strong>"View More"</strong> at the bottom of the share sheet</div></div>
+    <div class="step"><span class="step-num">3</span><div class="step-text">Tap <strong>"Add to Home Screen"</strong></div></div>
+    <div class="step"><span class="step-num">4</span><div class="step-text">Tap <strong>"Add"</strong> in the top right</div></div>
   </div>
 
   <div class="steps" id="stepsAndroid" style="display:none">
