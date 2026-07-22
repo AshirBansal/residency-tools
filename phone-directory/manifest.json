@@ -1,6 +1,6 @@
 {
-  "name": "St. Joseph's Directory",
-  "short_name": "St. Joseph's",
+  "name": "St. Joe's Directory",
+  "short_name": "St. Joe's Directory",
   "description": "Quick reference phone directory for hospital extensions",
   "start_url": ".",
   "display": "standalone",
