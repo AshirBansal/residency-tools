@@ -52,6 +52,20 @@ Enhancements worth considering; none blocking.
 
 ## Changelog — shipped
 
+### Reorganized into 3 tabs by purpose
+Replaced the 4 location-based tabs with 3 task-based tabs:
+- **📞 Phone Numbers** — one scrollable page grouped into Operating Room, Hospital Floors / Nurses Stations, Consultants (direct MD extensions), Services, and PAT Office (in that order), alphabetical within each. Category filter chips; 5933 + Anes Tech buttons pinned on top.
+- **📟 Pagers** — a "how to page" explainer plus everyone you page (residents), with Page as the primary action.
+- **💉 Anesthesia Reference** — our own on-call phones and pagers.
+
+Data re-tagged to the new taxonomy (ED/ICUs → Floors & Nurses; residents → Consultants; Anesthesia On-Call → Anesthesia). Contacts with both a phone and pager (e.g. OB Resident) appear on both the Phone and Pagers tabs. Search spans all tabs. Evaluated via a temporary `/phone-directory-preview/` build before merging.
+
+### Add CT Reading Room, MRI, Resp Tech; OB Resident phone
+CT Reading Room 2666, MRI 3629, Resp Tech 3980 (Services); OB Resident direct line 3343 added alongside its pager.
+
+### Refresh button + guaranteed-access caching
+Header ↻ button force-fetches the latest numbers (clears caches, reloads, confirms with a toast). Service worker switched to stale-while-revalidate so the app always opens instantly — even on slow/captive hospital WiFi — and refreshes data in the background.
+
 ### Install helper + PWA name consistency
 - **Install landing page** (`phone-directory/install.html`) — a shareable page that walks people through adding the app to their home screen. Auto-detects iPhone vs Android, auto-redirects to the directory if already installed (standalone), and on Android Chrome offers a native one-tap install via `beforeinstallprompt`.
 - iPhone instructions unified into one box with a small Safari vs Chrome/Firefox branch (Safari: ⋯ → Share → View More → Add to Home Screen; Chrome/Firefox: Share in address bar). Uses a proper share-icon SVG, not an emoji.
