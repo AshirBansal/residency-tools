@@ -57,3 +57,6 @@ Services,,Hospital Operator for Physicians,,3330,,,false,
 Services,,Housekeeping,,3997,,,false,
 Services,,IT,,4494,,,false,
 Services,,EVS,,2785,,,false,
+Services,,CT Reading Room,,2666,,,false,ct cat scan radiology imaging reading room
+Services,,MRI,,3629,,,false,magnetic resonance imaging radiology
+Services,,Resp Tech,,3980,,,false,respiratory therapy therapist rt
