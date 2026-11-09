@@ -24,6 +24,17 @@ Need individual unit phone numbers to distinguish:
 - Neuro ICU
 - Cardiac ICU
 
+#### #11 — Peds Residents (St. Joe's) — number to confirm
+Candidate number **3994** for the pediatric residents. Reported but **not yet confirmed current** — confirm before adding to On-Call Services, then it's a one-line CSV add.
+
+#### #12 — Outside / ancillary locations (staff request, Sep 25)
+Request to add "outside locations." Names came in garbled over text and need the exact label + number for each. Known so far (confirm all):
+- **Cardiac "KAT"** — clarify whether this is Cardiac **CT** or the Cardiac **Cath lab**
+- **TEE** (transesophageal echo)
+- **Xavier 7** — clarify what/where this is
+- **MRI** — an additional/outside MRI location (distinct from the in-house MRI 3629 already listed?)
+- *(list was truncated — more locations likely coming)*
+
 ---
 
 ## Future Ideas — not started

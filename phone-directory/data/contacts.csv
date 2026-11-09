@@ -35,7 +35,7 @@ On-Call Services,,To Page (dial then pager #),,5678,,,false,
 On-Call Services,,Ortho Resident,,,,0002,false,
 On-Call Services,,OMFS Resident,,,,0132,false,
 On-Call Services,,SICU Resident,,3838,,,false,
-On-Call Services,,OB Resident,,,,0123,false,
+On-Call Services,,OB Resident,,3343,,0123,false,obstetrics ob gyn
 Anesthesia On-Call,,OB Anesthesia Phone,5512656254,,,,false,
 Anesthesia On-Call,,Code/Airway Phone,2019576547,,,,false,
 Anesthesia On-Call,,PAT Pager,,,,0041,false,
