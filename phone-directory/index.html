@@ -30,7 +30,7 @@ body{
   background:rgba(15,23,42,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);padding:14px 16px 11px
 }
-.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:10px;text-align:center}
+.header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:9px;text-align:center}
 .refresh-btn{
   position:absolute;top:11px;right:12px;z-index:2;
   width:34px;height:34px;border:none;border-radius:50%;
@@ -206,6 +206,22 @@ body{
 .feedback-link{text-align:center;padding:20px 16px 4px}
 .feedback-link a{color:var(--text-dim);font-size:0.82rem;text-decoration:none;opacity:0.7}
 .regan-note{font-size:0.72rem;color:var(--text-dim);padding:4px 14px 6px;font-style:italic}
+/* ── Sort / filter bar ── */
+.sort-bar{position:sticky;top:0;z-index:10;background:var(--bg);padding:2px 0 8px}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:8px}
+.seg button{padding:6px 16px;border:none;background:transparent;color:var(--text-dim);font-family:inherit;font-size:0.8rem;font-weight:700;cursor:pointer;transition:background 0.15s,color 0.15s;-webkit-user-select:none;user-select:none}
+.seg button.active{background:rgba(var(--accent-rgb),0.18);color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:5px 11px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text-dim);font-family:inherit;font-size:0.76rem;font-weight:600;cursor:pointer;transition:background 0.15s,color 0.15s,border-color 0.15s;-webkit-user-select:none;user-select:none}
+.chip.active{background:rgba(var(--accent-rgb),0.18);color:var(--accent);border-color:rgba(var(--accent-rgb),0.4)}
+/* ── Category headers (open sections) ── */
+.cat-head{font-size:0.95rem;font-weight:700;letter-spacing:-0.01em;color:var(--accent);padding:12px 2px 6px}
+.cat-tag{display:inline-block;margin-left:8px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-dim);background:rgba(255,255,255,0.06);border:1px solid var(--border);padding:1px 6px;border-radius:5px;vertical-align:middle}
+/* ── Pager / anes help ── */
+.pager-help{background:var(--surface);border:1px solid rgba(var(--accent-rgb),0.25);border-radius:var(--radius);padding:13px 15px;margin-bottom:12px}
+.pager-help-title{font-size:0.92rem;font-weight:700;color:var(--accent);margin-bottom:5px}
+.pager-help p{font-size:0.86rem;color:var(--text-dim);line-height:1.55}
+.pager-help b{color:var(--text);font-weight:700}
 @media(min-width:600px){body{max-width:540px;margin:0 auto}}
 </style>
 </head>
@@ -234,34 +250,47 @@ body{
 const CALL_SVG='<svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>';
 const BASE='973754';
 const PAGING='9737545678';
-const PAGE_HELPER_LABEL='To Page (dial then pager #)';
 const REGAN_NOTE='Rooms <50 = North wing · Rooms ≥50 = South wing';
 
-const PAGES=[
-  {id:'or',    label:'OR & Anes', emoji:'🏥',color:'#38bdf8',rgb:'56,189,248',  sections:['Main OR','SDS','PAT Office']},
-  {id:'oncall',label:'On-Call',   emoji:'📟',color:'#fb923c',rgb:'251,146,60',  sections:['On-Call Services','Anesthesia On-Call']},
-  {id:'floors',label:'Floors',    emoji:'🏢',color:'#34d399',rgb:'52,211,153',  sections:['Floors','Departments']},
-  {id:'svcs',  label:'Services',  emoji:'🔧',color:'#a78bfa',rgb:'167,139,250', sections:['Services']},
+// Three top-level tabs, split by what you're trying to do
+const TABS=[
+  {id:'phones',label:'Phone #s',emoji:'📞',color:'#38bdf8',rgb:'56,189,248'},
+  {id:'pagers',label:'Pagers',  emoji:'📟',color:'#fb923c',rgb:'251,146,60'},
+  {id:'anes',  label:'Anes Ref',emoji:'💉',color:'#a78bfa',rgb:'167,139,250'},
 ];
 
-const SECTION_DISPLAY={
-  'Main OR':'🏥 Main OR','SDS':'🏥 SDS',
-  'Anesthesia On-Call':'🔔 Anesthesia On-Call',
-  'PAT Office':'🩺 PAT Office',
-  'Departments':'🏥 Departments',
-  'On-Call Services':'📟 On-Call Services',
-  'Floors':'🏢 Floors','Services':'🔧 Services'
-};
-const SECTION_MODE={
-  'Floors':'split',
-  'Departments':'flat',
-  'Services':'flat'
-};
+// Categories on the Phone Numbers tab (display order)
+const PHONE_CATS=[
+  {key:'Operating Room', title:'Operating Room',                    chip:'OR',          sub:true},
+  {key:'Floors & Nurses',title:'Hospital Floors / Nurses Stations', chip:'Floors',      sub:true},
+  {key:'Consultants',    title:'Consultants (direct extensions)',   chip:'Consultants', sub:false},
+  {key:'Services',       title:'Services',                          chip:'Services',    sub:false},
+  {key:'PAT Office',     title:'PAT Office',                        chip:'PAT',         sub:true},
+];
+const PHONE_CAT_KEYS=PHONE_CATS.map(c=>c.key);
 
-let allRows=[];
+// Grouping + colors for the search overlay
+const SEARCH_GROUPS=[
+  {key:'Critical',       label:'Critical',       color:'#f87171',rgb:'248,113,113'},
+  {key:'Operating Room', label:'Operating Room', color:'#38bdf8',rgb:'56,189,248'},
+  {key:'PAT Office',     label:'PAT Office',      color:'#38bdf8',rgb:'56,189,248'},
+  {key:'Floors & Nurses',label:'Floors / Nurses', color:'#34d399',rgb:'52,211,153'},
+  {key:'Consultants',    label:'Consultants',     color:'#fb923c',rgb:'251,146,60'},
+  {key:'Anesthesia',     label:'Anesthesia',      color:'#a78bfa',rgb:'167,139,250'},
+  {key:'Services',       label:'Services',        color:'#a78bfa',rgb:'167,139,250'},
+];
+
+let allRows=[],phoneRows=[],pagerRows=[],anesRows=[];
 let currentPageIdx=0;
 let programmaticScroll=false;
 let scrollSettleTimer=null;
+let phoneFilter='all'; // 'all' or a PHONE_CATS key
+let phoneListEl=null;
+
+function callable(e){return !!(e.type1||e.type2||e.type3)}
+function hasPager(e){return !!e.type4}
+function byLabel(a,b){return a.label.localeCompare(b.label)}
+function chipFor(section){const c=PHONE_CATS.find(x=>x.key===section);return c?c.chip:''}
 
 // ─── Utilities ───────────────────────────────────────────────────────────────
 function htmlEsc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
@@ -318,11 +347,15 @@ function buildDetailLines(e){
 }
 
 // ─── Row rendering ───────────────────────────────────────────────────────────
-function createContactRow(entry){
+function createContactRow(entry,opts){
+  opts=opts||{};
   const div=document.createElement('div');
   div.className='phone-row'+(entry.urgent?' urgent':'');
   const detailLines=buildDetailLines(entry);
-  const isPagerPrimary=!entry.type1&&!entry.type2&&!entry.type3&&!!entry.type4;
+  // Pager is the primary action when forced (Pagers tab) or when it's the only number
+  const isPagerPrimary=(opts.pagerPrimary&&!!entry.type4)||(!entry.type1&&!entry.type2&&!entry.type3&&!!entry.type4);
+  const href=isPagerPrimary?'tel:'+PAGING:primaryHref(entry);
+  const tagHTML=opts.tag?'<span class="cat-tag">'+htmlEsc(opts.tag)+'</span>':'';
   let detailHTML='';
   if(detailLines.length){
     detailHTML='<div class="phone-detail"><div class="phone-detail-inner">'+
@@ -330,8 +363,8 @@ function createContactRow(entry){
         '</span><a href="'+l.href+'" class="detail-call-btn'+(l.isPager?' pager':'')+'">'+CALL_SVG+(l.isPager?'Page':'Call')+'</a></div>').join('')+
       '</div></div>';
   }
-  div.innerHTML='<span class="phone-label">'+htmlEsc(entry.label)+'</span>'+
-    '<a href="'+primaryHref(entry)+'" class="phone-number'+(isPagerPrimary?' pager':'')+'">'+CALL_SVG+(isPagerPrimary?'Page':'Call')+'</a>'+
+  div.innerHTML='<span class="phone-label">'+htmlEsc(entry.label)+tagHTML+'</span>'+
+    '<a href="'+href+'" class="phone-number'+(isPagerPrimary?' pager':'')+'">'+CALL_SVG+(isPagerPrimary?'Page':'Call')+'</a>'+
     (detailLines.length?'<span class="info-icon">ⓘ</span>':'')+detailHTML;
   return div;
 }
@@ -346,91 +379,97 @@ function toggleExpand(rowEl){
 function toggleAccordion(header){header.parentElement.classList.toggle('open')}
 
 // ─── Section builders ────────────────────────────────────────────────────────
-function buildRowsInto(container,rows,opts){
+// A rounded list card of contact rows, optionally with subsection sub-headers.
+function makeListCard(rows,opts){
   opts=opts||{};
-  if(opts.note){
-    const note=document.createElement('div');note.className='regan-note';
-    note.textContent=opts.note;
-    container.appendChild(note);
-  }
-  let currentSub=null;
-  rows.forEach(entry=>{
-    if(opts.showSubHeaders&&entry.subsection&&entry.subsection!==currentSub){
-      currentSub=entry.subsection;
-      const sh=document.createElement('div');sh.className='sub-header';sh.textContent=currentSub;
-      container.appendChild(sh);
+  const card=document.createElement('div');card.className='flat-list';
+  let curSub=null;
+  rows.forEach(e=>{
+    if(opts.subHeaders&&e.subsection&&e.subsection!==curSub){
+      curSub=e.subsection;
+      const sh=document.createElement('div');sh.className='sub-header';sh.textContent=curSub;
+      card.appendChild(sh);
+      if(curSub==='Regan'){
+        const n=document.createElement('div');n.className='regan-note';n.textContent=REGAN_NOTE;
+        card.appendChild(n);
+      }
     }
-    if(entry.label===PAGE_HELPER_LABEL){
-      const row=document.createElement('div');row.className='phone-row placeholder';
-      const lbl=document.createElement('span');lbl.className='phone-label';lbl.textContent=entry.label;
-      const ext=document.createElement('span');ext.className='phone-number';ext.textContent='Ext '+entry.type2;
-      row.appendChild(lbl);row.appendChild(ext);container.appendChild(row);
-    }else{
-      container.appendChild(createContactRow(entry));
-    }
+    card.appendChild(createContactRow(e,opts.rowOpts?opts.rowOpts(e):null));
   });
+  return card;
 }
 
-function buildAccordionShell(title){
-  const acc=document.createElement('div');
-  acc.className='accordion';
-  acc.innerHTML=
-    '<div class="accordion-header" onclick="toggleAccordion(this)">'+
-      '<span class="accordion-title">'+htmlEsc(title)+'</span>'+
-      '<svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'+
-    '</div>'+
-    '<div class="accordion-body"><div class="accordion-body-inner"></div></div>';
-  return acc;
+// Group rows by subsection (first-appearance order), alphabetized within each.
+function groupBySub(rows){
+  const order=[],g={};
+  rows.forEach(e=>{const s=e.subsection||'';if(!(s in g)){g[s]=[];order.push(s);}g[s].push(e);});
+  const out=[];
+  order.forEach(s=>{g[s].sort(byLabel);g[s].forEach(e=>out.push(e));});
+  return out;
 }
 
-function buildAccordion(sectionName,rows){
-  const acc=buildAccordionShell(SECTION_DISPLAY[sectionName]||sectionName);
-  buildRowsInto(acc.querySelector('.accordion-body-inner'),rows,{showSubHeaders:true});
-  return acc;
+function noResults(txt){
+  const nr=document.createElement('div');nr.className='no-results visible';nr.textContent=txt||'No contacts';
+  return nr;
 }
 
-function buildSplitAccordions(sectionName,rows){
-  const frag=document.createDocumentFragment();
-  const emojiMatch=(SECTION_DISPLAY[sectionName]||'').match(/^(\S+)/);
-  const emoji=emojiMatch?emojiMatch[1]+' ':'';
-  const groups={};
-  const order=[];
-  rows.forEach(r=>{
-    const sub=r.subsection||sectionName;
-    if(!order.includes(sub)){order.push(sub);groups[sub]=[];}
-    groups[sub].push(r);
+// ─── Phone Numbers tab ───────────────────────────────────────────────────────
+function buildPhonePage(page){
+  const bar=document.createElement('div');bar.className='sort-bar';
+  const chips=document.createElement('div');chips.className='chips';
+  const mkChip=(key,txt)=>{
+    const c=document.createElement('button');c.className='chip'+(phoneFilter===key?' active':'');
+    c.textContent=txt;c.dataset.f=key;
+    c.addEventListener('click',()=>{
+      phoneFilter=key;
+      chips.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active',x.dataset.f===key));
+      renderPhoneList();
+    });
+    return c;
+  };
+  chips.appendChild(mkChip('all','All'));
+  PHONE_CATS.forEach(c=>chips.appendChild(mkChip(c.key,c.chip)));
+  bar.appendChild(chips);
+  page.appendChild(bar);
+  phoneListEl=document.createElement('div');phoneListEl.id='phone-list';
+  page.appendChild(phoneListEl);
+  renderPhoneList();
+}
+
+function renderPhoneList(){
+  const host=phoneListEl;
+  if(!host) return;
+  host.innerHTML='';
+  const cats=PHONE_CATS.filter(c=>phoneFilter==='all'||c.key===phoneFilter);
+  let any=false;
+  cats.forEach(cat=>{
+    const rows=phoneRows.filter(e=>e.section===cat.key);
+    if(!rows.length) return;
+    any=true;
+    const head=document.createElement('div');head.className='cat-head';head.textContent=cat.title;
+    host.appendChild(head);
+    if(cat.sub) host.appendChild(makeListCard(groupBySub(rows),{subHeaders:true}));
+    else host.appendChild(makeListCard(rows.slice().sort(byLabel),{}));
   });
-  order.forEach(sub=>{
-    const acc=buildAccordionShell(emoji+sub);
-    const opts={showSubHeaders:false};
-    if(sub==='Regan') opts.note=REGAN_NOTE;
-    buildRowsInto(acc.querySelector('.accordion-body-inner'),groups[sub],opts);
-    frag.appendChild(acc);
-  });
-  return frag;
+  if(!any) host.appendChild(noResults());
 }
 
-function buildFlatList(rows){
-  const list=document.createElement('div');
-  list.className='flat-list';
-  buildRowsInto(list,rows,{showSubHeaders:false});
-  return list;
+// ─── Pagers tab ──────────────────────────────────────────────────────────────
+function buildPagersPage(page){
+  const help=document.createElement('div');help.className='pager-help';
+  help.innerHTML='<div class="pager-help-title">📟 How to page</div>'+
+    '<p>Dial <b>973-754-5678</b>, enter the person’s <b>pager number</b>, then your <b>call-back number</b>. They’ll call you back.</p>';
+  page.appendChild(help);
+  page.appendChild(pagerRows.length?makeListCard(pagerRows,{rowOpts:()=>({pagerPrimary:true})}):noResults('No pagers listed'));
 }
 
-function buildPage(cfg,sectionMap){
-  const page=document.createElement('div');
-  page.className='page';
-  page.dataset.pageIdx=PAGES.indexOf(cfg);
-  page.style.setProperty('--accent',cfg.color);
-  page.style.setProperty('--accent-rgb',cfg.rgb);
-  cfg.sections.forEach(name=>{
-    if(!sectionMap[name]) return;
-    const mode=SECTION_MODE[name];
-    if(mode==='split') page.appendChild(buildSplitAccordions(name,sectionMap[name]));
-    else if(mode==='flat') page.appendChild(buildFlatList(sectionMap[name]));
-    else page.appendChild(buildAccordion(name,sectionMap[name]));
-  });
-  return page;
+// ─── Anesthesia reference tab ────────────────────────────────────────────────
+function buildAnesPage(page){
+  const help=document.createElement('div');help.className='pager-help';
+  help.innerHTML='<div class="pager-help-title">💉 Anesthesia reference</div>'+
+    '<p>Our own on-call phones and pagers.</p>';
+  page.appendChild(help);
+  page.appendChild(anesRows.length?makeListCard(anesRows,{}):noResults());
 }
 
 function appendFeedbackLink(page){
@@ -460,7 +499,7 @@ function buildQuickStrip(rows){
 function buildTabBar(){
   const bar=document.getElementById('tab-bar');
   const dots=document.getElementById('page-dots');
-  PAGES.forEach((cfg,idx)=>{
+  TABS.forEach((cfg,idx)=>{
     const btn=document.createElement('button');
     btn.className='tab-btn'+(idx===0?' active':'');
     btn.style.setProperty('--tab-color',cfg.color);
@@ -478,12 +517,23 @@ function buildTabBar(){
 // ─── Directory assembly ──────────────────────────────────────────────────────
 function buildDirectory(rows){
   allRows=rows;
-  const sectionMap={};
-  rows.forEach(r=>{if(!sectionMap[r.section])sectionMap[r.section]=[];sectionMap[r.section].push(r);});
-  if(sectionMap['Critical']) buildQuickStrip(sectionMap['Critical']);
+  const crit=rows.filter(r=>r.section==='Critical');
+  if(crit.length) buildQuickStrip(crit);
+
+  phoneRows=rows.filter(r=>PHONE_CAT_KEYS.includes(r.section)&&callable(r));
+  pagerRows=rows.filter(r=>hasPager(r)&&r.section!=='Anesthesia').slice().sort(byLabel);
+  anesRows=rows.filter(r=>r.section==='Anesthesia');
+
   const scroll=document.getElementById('pages-scroll');
-  PAGES.forEach(cfg=>{
-    const page=buildPage(cfg,sectionMap);
+  TABS.forEach((tab,idx)=>{
+    const page=document.createElement('div');
+    page.className='page';
+    page.dataset.pageIdx=idx;
+    page.style.setProperty('--accent',tab.color);
+    page.style.setProperty('--accent-rgb',tab.rgb);
+    if(tab.id==='phones') buildPhonePage(page);
+    else if(tab.id==='pagers') buildPagersPage(page);
+    else buildAnesPage(page);
     appendFeedbackLink(page);
     scroll.appendChild(page);
   });
@@ -529,7 +579,7 @@ function updateActiveTab(idx){
   currentPageIdx=idx;
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
   document.querySelectorAll('.page-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
-  const cfg=PAGES[idx];
+  const cfg=TABS[idx];
   document.documentElement.style.setProperty('--accent',cfg.color);
   document.documentElement.style.setProperty('--accent-rgb',cfg.rgb);
 }
@@ -559,24 +609,21 @@ function filterContacts(){
   overlay.innerHTML='';
   let total=0;
   let groupIdx=0;
-  PAGES.forEach(cfg=>{
-    const hits=allRows.filter(r=>{
-      if(!cfg.sections.includes(r.section)||r.label===PAGE_HELPER_LABEL) return false;
-      return(r.label+' '+(r.search||'')).toLowerCase().includes(query);
-    });
+  SEARCH_GROUPS.forEach(g=>{
+    const hits=allRows.filter(r=>r.section===g.key&&(r.label+' '+(r.search||'')).toLowerCase().includes(query));
     if(!hits.length) return;
     const lbl=document.createElement('div');
-    lbl.className='search-group-label';lbl.textContent=cfg.label;
-    lbl.style.setProperty('--group-color',cfg.color);
+    lbl.className='search-group-label';lbl.textContent=g.label;
+    lbl.style.setProperty('--group-color',g.color);
     lbl.style.animationDelay=(groupIdx*0.05)+'s';
     overlay.appendChild(lbl);
     const card=document.createElement('div');
     card.className='search-card';
-    card.style.setProperty('--card-rgb',cfg.rgb);
-    card.style.setProperty('--accent',cfg.color);
-    card.style.setProperty('--accent-rgb',cfg.rgb);
+    card.style.setProperty('--card-rgb',g.rgb);
+    card.style.setProperty('--accent',g.color);
+    card.style.setProperty('--accent-rgb',g.rgb);
     card.style.animationDelay=(groupIdx*0.05+0.03)+'s';
-    hits.forEach(e=>card.appendChild(createContactRow(e)));
+    hits.slice().sort(byLabel).forEach(e=>card.appendChild(createContactRow(e)));
     overlay.appendChild(card);
     total+=hits.length;
     groupIdx++;
