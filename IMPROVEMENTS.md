@@ -30,6 +30,9 @@ Need individual unit phone numbers to distinguish:
 
 Enhancements worth considering; none blocking.
 
+- **Smarter / fuzzy search** *(high priority)* — today search is a plain substring match against each row's label plus a manual `search` alias column in the CSV. That misses common variations: "charge nurse" won't find **Charge RN** (its alias column is empty), "OB" only works for L&D because someone hand-entered it, and typos ("delivry", "obgyn") match nothing. Two complementary fixes:
+  - *Quick win, no code:* fill in the `search` column for more rows (e.g. Charge RN → "charge nurse charge", and audit every row for obvious synonyms/abbreviations).
+  - *Real fuzzy matching:* add typo- and partial-tolerant scoring — a small Levenshtein/token scorer, or a tiny library like Fuse.js — so "labor and delivery" typed any number of ways, "charge nurse", etc. all rank the right result without hand-maintaining every alias. Needs tuning so it stays precise on a small dataset (avoid over-matching).
 - **Paging integration** — let a user send a page from the app (dial-then-pager-# flow, or the myairmail.com web form). Parked earlier: the web form blocks automated requests and only works on hospital WiFi. Revisit if a supported path becomes available.
 - **Real screenshots on the install page** — `install.html` currently describes the Share/Add-to-Home-Screen steps in text. Small annotated screenshots per step could make it even clearer, at the cost of maintaining images.
 - **Usage sense-check** — no analytics today (by design). If it ever matters which numbers get used most, consider a lightweight privacy-respecting approach.
