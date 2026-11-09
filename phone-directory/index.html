@@ -30,7 +30,7 @@ body{
   background:rgba(15,23,42,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);padding:14px 16px 11px
 }
-.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:10px;text-align:center}
+.header h1{font-size:1.1rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:9px;text-align:center}
 .refresh-btn{
   position:absolute;top:11px;right:12px;z-index:2;
   width:34px;height:34px;border:none;border-radius:50%;
@@ -284,7 +284,6 @@ let allRows=[],phoneRows=[],pagerRows=[],anesRows=[];
 let currentPageIdx=0;
 let programmaticScroll=false;
 let scrollSettleTimer=null;
-let phoneSort='cat';   // 'cat' = grouped by category, 'az' = flat A–Z
 let phoneFilter='all'; // 'all' or a PHONE_CATS key
 let phoneListEl=null;
 
@@ -417,19 +416,6 @@ function noResults(txt){
 // ─── Phone Numbers tab ───────────────────────────────────────────────────────
 function buildPhonePage(page){
   const bar=document.createElement('div');bar.className='sort-bar';
-  const seg=document.createElement('div');seg.className='seg';
-  [['cat','Category'],['az','A–Z']].forEach(pair=>{
-    const mode=pair[0],txt=pair[1];
-    const b=document.createElement('button');b.textContent=txt;b.dataset.sort=mode;
-    if(phoneSort===mode) b.classList.add('active');
-    b.addEventListener('click',()=>{
-      phoneSort=mode;
-      seg.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x.dataset.sort===mode));
-      renderPhoneList();
-    });
-    seg.appendChild(b);
-  });
-  bar.appendChild(seg);
   const chips=document.createElement('div');chips.className='chips';
   const mkChip=(key,txt)=>{
     const c=document.createElement('button');c.className='chip'+(phoneFilter===key?' active':'');
@@ -454,11 +440,6 @@ function renderPhoneList(){
   const host=phoneListEl;
   if(!host) return;
   host.innerHTML='';
-  if(phoneSort==='az'){
-    const rows=phoneRows.filter(e=>phoneFilter==='all'||e.section===phoneFilter).slice().sort(byLabel);
-    host.appendChild(rows.length?makeListCard(rows,{rowOpts:e=>({tag:chipFor(e.section)})}):noResults());
-    return;
-  }
   const cats=PHONE_CATS.filter(c=>phoneFilter==='all'||c.key===phoneFilter);
   let any=false;
   cats.forEach(cat=>{
