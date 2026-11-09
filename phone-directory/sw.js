@@ -1,4 +1,4 @@
-const VERSION='v2';
+const VERSION='v3';
 const ASSETS=['./','index.html','install.html','data/contacts.csv','manifest.json','icon-192.png','icon-512.png'];
 
 self.addEventListener('install',e=>{
